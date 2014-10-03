@@ -136,10 +136,8 @@ The Chromium project already has a component,
 [_cronet_](https://chromium.googlesource.com/chromium/src/+/master/components/cronet/),
 which packages the Chromium network stack for use in Android applications.
 Our Cnet wrapper gives us the ability to expose the Chromium features that
-we need, and to keep the response body on the native heap (which is important
-for processing many images).  Alternatively, we could have modified Cronet,
-but then we'd amplify the task of merging our code with the evolving Chromium
-code.
+we need.  Alternatively, we could have modified Cronet, but then we'd
+amplify the task of merging our code with the evolving Chromium code.
 
 # Design
 
