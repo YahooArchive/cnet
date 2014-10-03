@@ -1,6 +1,12 @@
 // Copyright 2014, Yahoo! Inc.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+// Some portions of this file:
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -26,6 +32,8 @@
 
 namespace {
 
+// LICENSE: copied from base/strings/string_split.cc
+//  (it isn't exposed via a header file)
 bool SplitStringIntoKeyValue(const std::string& line,
                              char key_value_delimiter,
                              std::string* key,
