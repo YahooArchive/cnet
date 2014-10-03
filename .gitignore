@@ -1,0 +1,11 @@
+*.swp
+android/.gradle/
+android/bin/
+android/build/
+android/gen/
+android/libs/
+android/res/
+cnet.xcodeproj/
+cnet.iml
+macosx/libs
+macosx/bin
