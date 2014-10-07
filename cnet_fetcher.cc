@@ -723,14 +723,15 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
   cnet_timing->socket_reused = net_timing.socket_reused;
   cnet_timing->socket_log_id = net_timing.socket_log_id;
 
-  if (receive_completed_ > request_started_) {
+  if (!request_started_.is_null() && receive_completed_ > request_started_) {
     base::TimeDelta delta = receive_completed_ - request_started_;
     cnet_timing->total_ms = delta.InMilliseconds();
   } else {
     cnet_timing->total_ms = 0;
   }
 
-  if (net_timing.connect_timing.dns_end > net_timing.connect_timing.dns_start) {
+  if (!net_timing.connect_timing.dns_start.is_null() &&
+      net_timing.connect_timing.dns_end > net_timing.connect_timing.dns_start) {
     base::TimeDelta delta =
         net_timing.connect_timing.dns_end - net_timing.connect_timing.dns_start;
     cnet_timing->dns_ms = delta.InMilliseconds();
@@ -738,7 +739,8 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
     cnet_timing->dns_ms = 0;
   }
 
-  if (net_timing.connect_timing.ssl_end > net_timing.connect_timing.ssl_start) {
+  if (!net_timing.connect_timing.ssl_start.is_null() &&
+      net_timing.connect_timing.ssl_end > net_timing.connect_timing.ssl_start) {
     base::TimeDelta delta = net_timing.connect_timing.ssl_end -
         net_timing.connect_timing.ssl_start;
     cnet_timing->ssl_ms = delta.InMilliseconds();
@@ -746,8 +748,9 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
     cnet_timing->ssl_ms = 0;
   }
 
-  if (net_timing.connect_timing.connect_end >
-      net_timing.connect_timing.connect_start) {
+  if (!net_timing.connect_timing.connect_start.is_null() &&
+      (net_timing.connect_timing.connect_end >
+       net_timing.connect_timing.connect_start)) {
     base::TimeDelta delta =
         net_timing.connect_timing.connect_end -
             net_timing.connect_timing.connect_start;
@@ -759,7 +762,8 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
     cnet_timing->connect_ms = 0;
   }
 
-  if (net_timing.proxy_resolve_end > net_timing.proxy_resolve_start) {
+  if (!net_timing.proxy_resolve_start.is_null() &&
+      net_timing.proxy_resolve_end > net_timing.proxy_resolve_start) {
     base::TimeDelta delta = net_timing.proxy_resolve_end -
         net_timing.proxy_resolve_start;
     cnet_timing->proxy_resolve_ms = delta.InMilliseconds();
@@ -767,14 +771,16 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
     cnet_timing->proxy_resolve_ms = 0;
   }
 
-  if (net_timing.send_end > net_timing.send_start) {
+  if (!net_timing.send_start.is_null() &&
+      net_timing.send_end > net_timing.send_start) {
     base::TimeDelta delta = net_timing.send_end - net_timing.send_start;
     cnet_timing->send_ms = delta.InMilliseconds();
   } else {
     cnet_timing->send_ms = 0;
   }
 
-  if (net_timing.receive_headers_end > net_timing.send_end) {
+  if (!net_timing.send_start.is_null() &&
+      net_timing.receive_headers_end > net_timing.send_end) {
     base::TimeDelta delta = net_timing.receive_headers_end -
         net_timing.send_end;
     cnet_timing->headers_receive_ms = delta.InMilliseconds();
@@ -794,6 +800,8 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
       cnet_timing->headers_receive_ms + cnet_timing->data_receive_ms;
   if (cnet_timing->total_ms > sum) {
     cnet_timing->queued_ms = cnet_timing->total_ms - sum;
+  } else {
+    cnet_timing->queued_ms = 0;
   }
 
   cnet_timing->from_cache = request_->was_cached();
