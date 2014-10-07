@@ -103,6 +103,10 @@ CNET_EXPORT void CnetPoolSetTrustAllCertAuthorities(CnetPool pool, int enabled);
 // requests.  This has no timeout, so use carefully.
 CNET_EXPORT void CnetPoolDrain(CnetPool pool);
 
+// Preconnect some sockets to a remote host for reuse by Fetchers.
+CNET_EXPORT void CnetPoolPreconnect(CnetPool pool, const char* url,
+    int num_streams);
+
 // For mass request cancellation by tag, register a fetcher with a tag.
 // Multiple fetchers can be registered with the same tag.
 CNET_EXPORT void CnetPoolTagFetcher(CnetPool pool, CnetFetcher fetcher, int tag);

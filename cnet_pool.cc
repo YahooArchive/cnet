@@ -4,8 +4,12 @@
 #include "yahoo/cnet/cnet_pool.h"
 
 #include "net/base/network_change_notifier.h"
+#include "net/http/http_network_session.h"
+#include "net/http/http_stream_factory.h"
+#include "net/http/http_transaction_factory.h"
 #include "net/ssl/ssl_config.h"
 #include "net/ssl/ssl_config_service.h"
+#include "net/url_request/http_user_agent_settings.h"
 #include "net/url_request/url_request.h"
 #include "net/url_request/url_request_context.h"
 #include "net/url_request/url_request_context_builder.h"
@@ -291,6 +295,46 @@ void Pool::RemoveObserver(Observer *observer) {
   if (observer != NULL) {
     observers_.RemoveObserver(observer);
   }
+}
+
+// LICENSE: modeled after PreconnectOnIOThread() from
+//          chrome/browser/net/preconnect.cc
+void Pool::Preconnect(const std::string& url, int num_streams) {
+  if (!GetNetworkTaskRunner()->RunsTasksOnCurrentThread()) {
+    GetNetworkTaskRunner()->PostTask(FROM_HERE,
+        base::Bind(&Pool::Preconnect, this, url, num_streams));
+    return;
+  }
+
+  DCHECK(pool_context_getter_ != NULL);
+  if (pool_context_getter_ == NULL) {
+    return;
+  }
+
+  net::URLRequestContext* context =
+      pool_context_getter_->GetURLRequestContext();
+  net::HttpTransactionFactory* factory = context->http_transaction_factory();
+  net::HttpNetworkSession* session = factory->GetSession();
+
+  std::string user_agent;
+  if (context->http_user_agent_settings()) {
+    user_agent = context->http_user_agent_settings()->GetUserAgent();
+  }
+  net::HttpRequestInfo request_info;
+  request_info.url = GURL(url);
+  request_info.method = "GET";
+  request_info.extra_headers.SetHeader(net::HttpRequestHeaders::kUserAgent,
+      user_agent);
+  request_info.motivation = net::HttpRequestInfo::EARLY_LOAD_MOTIVATED;
+
+  net::SSLConfig ssl_config;
+  session->ssl_config_service()->GetSSLConfig(&ssl_config);
+  session->GetNextProtos(&ssl_config.next_protos);
+  ssl_config.verify_ev_cert = true;
+
+  net::HttpStreamFactory* http_stream_factory = session->http_stream_factory();
+  http_stream_factory->PreconnectStreams(num_streams, request_info,
+      net::HIGHEST, ssl_config, ssl_config);
 }
 
 void Pool::TagFetcher(scoped_refptr<Fetcher> fetcher, int tag) {

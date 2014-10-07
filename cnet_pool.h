@@ -74,7 +74,9 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
 
   void AddObserver(Observer* observer);
   void RemoveObserver(Observer* observer);
-  
+
+  void Preconnect(const std::string& url, int num_streams);
+
   // TODO: move the add-tag logic into an observer on the fetcher.
   void TagFetcher(scoped_refptr<Fetcher> fetcher, int tag);
   void CancelTag(int tag);

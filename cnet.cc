@@ -189,6 +189,12 @@ void CnetPoolDrain(CnetPool pool) {
   }
 }
 
+void CnetPoolPreconnect(CnetPool pool, const char* url, int num_streams) {
+  if ((pool != NULL) && (url != NULL)) {
+    static_cast<cnet::Pool*>(pool)->Preconnect(url, num_streams);
+  }
+}
+
 void CnetPoolTagFetcher(CnetPool pool, CnetFetcher fetcher, int tag) {
   if (pool != NULL) {
     static_cast<cnet::Pool*>(pool)->TagFetcher(
