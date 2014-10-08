@@ -573,7 +573,7 @@ int CnetResponseFailed(CnetResponse response) {
 
 int CnetResponseCancelled(CnetResponse response) {
   if (response != NULL) {
-    return static_cast<cnet::Response*>(response)->status().status() !=
+    return static_cast<cnet::Response*>(response)->status().status() ==
         net::URLRequestStatus::Status::CANCELED;
   } else {
     return 0;
