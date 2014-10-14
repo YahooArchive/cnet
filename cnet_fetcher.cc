@@ -66,7 +66,7 @@ Fetcher::Fetcher(scoped_refptr<Pool> pool, const std::string& url,
       min_speed_bytes_sec_(0), min_speed_coefficient_(0.4),
       last_progress_bytes_(0), last_bytes_sec_(0),
       user_data_(NULL) {
-  CHECK(pool_ != NULL);
+  CHECK(pool_.get() != NULL);
 }
 
 Fetcher::~Fetcher() {
@@ -206,7 +206,7 @@ bool Fetcher::BuildRequest() {
 
   // Create the request.
   net::URLRequestContextGetter* url_context_getter =
-      pool_->pool_context_getter();
+      pool_->pool_context_getter().get();
   CHECK(url_context_getter != NULL);
   request_ = url_context_getter->GetURLRequestContext()->CreateRequest(gurl_,
       net::DEFAULT_PRIORITY, this, NULL);
@@ -288,7 +288,7 @@ bool Fetcher::BuildRequest() {
               new net::UploadBytesElementReader(
                   upload_body_.data(), upload_body_.size()));
           readers.push_back(
-              new net::UploadFileElementReader(pool_->GetFileTaskRunner(),
+              new net::UploadFileElementReader(pool_->GetFileTaskRunner().get(),
                   upload_file_path_, upload_range_offset_,
                   upload_range_length_, base::Time()));
           readers.push_back(
@@ -320,7 +320,7 @@ bool Fetcher::BuildRequest() {
     } else if (!upload_file_path_.empty()) {
       // Send a file as the POST body.
       scoped_ptr<net::UploadElementReader> reader(
-          new net::UploadFileElementReader(pool_->GetFileTaskRunner(),
+          new net::UploadFileElementReader(pool_->GetFileTaskRunner().get(),
               upload_file_path_, upload_range_offset_,
               upload_range_length_, base::Time()));
 
@@ -465,7 +465,7 @@ void Fetcher::OnResponseStarted(net::URLRequest* request) {
     expected_bytes_ = request->GetExpectedContentSize();
 
     if (output_path_.empty()) {
-      if (read_buffer_ == NULL) {
+      if (read_buffer_.get() == NULL) {
         read_buffer_ = new net::GrowableIOBuffer();
       }
 
@@ -528,7 +528,7 @@ void Fetcher::OnDownloadProgress(int64 progress, int64 expected) {
 // LICENSE: modeled after URLRequestAdapter::Read() from
 //     components/cronet/android/url_request_adapter.cc
 void Fetcher::ReadIntoBufferStart() {
-  CHECK(read_buffer_ != NULL);
+  CHECK(read_buffer_.get() != NULL);
   while (true) {
     if (read_buffer_->RemainingCapacity() == 0) {
       int64 new_capacity = read_buffer_->capacity() + kBodyIncrement;
@@ -543,7 +543,7 @@ void Fetcher::ReadIntoBufferStart() {
 
     int bytes_read;
     int to_read = std::min(kReadIncrement, read_buffer_->RemainingCapacity());
-    if (request_->Read(read_buffer_, to_read, &bytes_read)) {
+    if (request_->Read(read_buffer_.get(), to_read, &bytes_read)) {
       // We completed a synchronous read.
       if (bytes_read == 0) {
         OnRequestComplete();
@@ -562,7 +562,7 @@ void Fetcher::ReadIntoBufferStart() {
 }
 
 void Fetcher::ReadIntoBufferComplete(int bytes_read) {
-  CHECK(read_buffer_ != NULL);
+  CHECK(read_buffer_.get() != NULL);
   read_buffer_->set_offset(read_buffer_->offset() + bytes_read);
 
   received_bytes_ += bytes_read;
@@ -575,7 +575,7 @@ void Fetcher::ReadIntoFileStart() {
     read_buffer_->SetCapacity(kReadIncrement);
 
     int bytes_read;
-    if (request_->Read(read_buffer_, read_buffer_->RemainingCapacity(),
+    if (request_->Read(read_buffer_.get(), read_buffer_->RemainingCapacity(),
                         &bytes_read)) {
       if (bytes_read == 0) {
         OnRequestComplete();
@@ -594,7 +594,7 @@ void Fetcher::ReadIntoFileStart() {
 }
 
 void Fetcher::ReadIntoFileComplete(int bytes_read) {
-  CHECK(read_buffer_ != NULL);
+  CHECK(read_buffer_.get() != NULL);
   scoped_refptr<net::IOBuffer> buffer = read_buffer_;
   read_buffer_ = NULL;
 

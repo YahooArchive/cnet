@@ -27,7 +27,7 @@ Response::~Response() {
 }
 
 const char* Response::response_body() {
-  if (read_buffer_ == NULL) {
+  if (read_buffer_.get() == NULL) {
     return NULL;
   } else {
     return read_buffer_->StartOfBuffer();
@@ -35,7 +35,7 @@ const char* Response::response_body() {
 }
 
 int Response::response_length() {
-  if (read_buffer_ == NULL) {
+  if (read_buffer_.get() == NULL) {
     return 0;
   } else {
     return read_buffer_->offset();

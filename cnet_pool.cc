@@ -125,7 +125,7 @@ void Pool::OnDestruct() const {
     return;
   }
 
-  if (ui_runner_ == NULL) {
+  if (ui_runner_.get() == NULL) {
     LOG(WARNING) << "Leaking CnetPool threads";
   } else {
     // Stopping the threads joins with them, so we have to do this from
@@ -187,7 +187,7 @@ void Pool::InitializeURLRequestContext(
 }
 
 void Pool::AllocSystemProxyOnUi() {
-  if ((ui_runner_ == NULL) || disable_system_proxy_) {
+  if ((ui_runner_.get() == NULL) || disable_system_proxy_) {
     ActivateSystemProxy(NULL);
     return;
   } else if (!ui_runner_->RunsTasksOnCurrentThread()) {
@@ -306,8 +306,8 @@ void Pool::Preconnect(const std::string& url, int num_streams) {
     return;
   }
 
-  DCHECK(pool_context_getter_ != NULL);
-  if (pool_context_getter_ == NULL) {
+  DCHECK(pool_context_getter_.get() != NULL);
+  if (pool_context_getter_.get() == NULL) {
     return;
   }
 

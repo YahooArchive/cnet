@@ -594,7 +594,7 @@ char* CnetResponseFirstHeaderCopy(CnetResponse raw_response,
   if (raw_response != NULL) {
     cnet::Response* response = static_cast<cnet::Response*>(raw_response);
     scoped_refptr<net::HttpResponseHeaders> headers(response->response_headers());
-    if (headers != NULL) {
+    if (headers.get() != NULL) {
       std::string value;
       if (headers->EnumerateHeader(NULL, header_name, &value)) {
         header_value = (char*)malloc(value.length() + 1);
