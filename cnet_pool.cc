@@ -112,6 +112,12 @@ Pool::Pool(scoped_refptr<base::SingleThreadTaskRunner> ui_runner,
 
   GetNetworkTaskRunner()->PostTask(FROM_HERE,
       base::Bind(&Pool::InitializeURLRequestContext, this, ui_runner));
+
+  // For Android, the proxy needs a JNI thread (which is our UI thread).  If
+  // we are being allocated from that thread, then we can immediately
+  // establish the proxy, so that we don't have to switch back to the UI
+  // thread later on to allocate it.
+  AllocSystemProxyOnUi();
 }
 
 Pool::~Pool() {
@@ -182,8 +188,6 @@ void Pool::InitializeURLRequestContext(
 
   pool_context_getter_ = new PoolContextGetter(context_.get(),
       GetNetworkTaskRunner());
-
-  AllocSystemProxyOnUi();
 }
 
 void Pool::AllocSystemProxyOnUi() {
