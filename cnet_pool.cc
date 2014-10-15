@@ -43,6 +43,9 @@ class SSLConfigService : public net::SSLConfigService {
 SSLConfigService::SSLConfigService(bool enable_ssl_false_start) {
   config_.false_start_enabled = enable_ssl_false_start;
   config_.require_forward_secrecy = true;
+
+  config_.version_min = net::SSL_PROTOCOL_VERSION_TLS1;
+  config_.version_max = net::kDefaultSSLVersionMax;
 }
 
 SSLConfigService::~SSLConfigService() {
