@@ -251,13 +251,16 @@
              },
              {
                'action_name': 'jar_src_<(_target_name)',
-               'inputs': ['tools/jar_src.py'] ,
+               'inputs': [
+                 'tools/jar_src.py',
+                 '<(jar_extract_stamp)',
+               ],
                'outputs': ['<(package_dir)/<(java_src_lib)'],
                'action': [
                  'python',
-                 '<@(_inputs)',
+                 '<(DEPTH)/yahoo/cnet/tools/jar_src.py',
                  '--target-path=<(java_srcs_dir)',
-                 '--src-path=<(DEPTH)/yahoo/cnet/android/java/src',
+                 '--src-path=<(DEPTH)/yahoo/cnet/android/java/src/com/yahoo/cnet',
                  '--src-path=<(DEPTH)/base/android/java/src',
                  '--src-path=<(DEPTH)/net/android/java/src',
                  '--src-path=<(DEPTH)/url/android/java/src',
