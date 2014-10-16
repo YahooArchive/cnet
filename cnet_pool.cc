@@ -243,7 +243,10 @@ void Pool::SetTrustAllCertAuthorities(bool value) {
     return;
   }
 
+#ifndef NDEBUG
   trust_all_cert_authorities_ = value;
+#endif
+
 }
 
 void Pool::SetEnableSslFalseStart(bool value) {
