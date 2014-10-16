@@ -1,6 +1,12 @@
 // Copyright 2014, Yahoo! Inc.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+// Some portions of this file:
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "yahoo/cnet/cnet_fetcher.h"
 
 #include <inttypes.h>
