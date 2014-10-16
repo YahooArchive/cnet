@@ -3,6 +3,7 @@ android/.gradle/
 android/bin/
 android/build/
 android/gen/
+android/java/src/org/chromium/cronet/
 android/libs/
 android/res/
 cnet.xcodeproj/
