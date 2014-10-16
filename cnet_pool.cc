@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 #include "yahoo/cnet/cnet_pool.h"
 
+#include <algorithm>
+
 #include "net/base/network_change_notifier.h"
 #include "net/http/http_network_session.h"
 #include "net/http/http_stream_factory.h"
@@ -44,7 +46,9 @@ SSLConfigService::SSLConfigService(bool enable_ssl_false_start) {
   config_.false_start_enabled = enable_ssl_false_start;
   config_.require_forward_secrecy = true;
 
-  config_.version_min = net::SSL_PROTOCOL_VERSION_TLS1;
+  config_.version_min = std::max(
+      static_cast<uint16>(net::SSL_PROTOCOL_VERSION_TLS1),
+      net::kDefaultSSLVersionMin);
   config_.version_max = net::kDefaultSSLVersionMax;
 }
 
