@@ -40,9 +40,9 @@ static jlong CreatePoolAdapter(JNIEnv* j_env, jobject j_caller,
   }
 
   std::string user_agent = (j_user_agent == NULL) ? "" :
-    base::android::ConvertJavaStringToUTF8(j_env, j_user_agent);
+      base::android::ConvertJavaStringToUTF8(j_env, j_user_agent);
   std::string cache_path = (j_cache_path == NULL) ? "" :
-    base::android::ConvertJavaStringToUTF8(j_env, j_cache_path);
+      base::android::ConvertJavaStringToUTF8(j_env, j_cache_path);
 
   cnet::Pool::Config pool_config;
   pool_config.user_agent = user_agent;
@@ -94,6 +94,14 @@ void PoolAdapter::SetEnableSslFalseStart(JNIEnv* j_env, jobject j_caller,
 
 jboolean PoolAdapter::GetEnableSslFalseStart(JNIEnv* j_env, jobject j_caller) {
   return pool_->get_ssl_false_start();
+}
+
+void PoolAdapter::Preconnect(JNIEnv* j_env, jobject j_caller, jstring j_url,
+    jint j_num_streams) {
+  if ((j_num_streams > 0) && (j_url != NULL)) {
+    std::string url = base::android::ConvertJavaStringToUTF8(j_env, j_url);
+    pool_->Preconnect(url, j_num_streams);
+  }
 }
 
 } // namespace android

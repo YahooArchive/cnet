@@ -90,6 +90,16 @@ public class Pool {
         }
     }
 
+    /**
+     * Preconnect to a remote host for use by future Fetchers.
+     * It will preconnect multiple streams.
+     */
+    public synchronized void preconnect(String url, int numStreams) {
+        if (mNativePoolAdapter != 0) {
+            nativePreconnect(mNativePoolAdapter, url, numStreams);
+        }
+    }
+
     @Override
     protected void finalize() throws Throwable {
         release();
@@ -120,7 +130,10 @@ public class Pool {
             long nativePoolAdapter);
 
     private native void nativeSetEnableSslFalseStart(long nativePoolAdapter,
-          boolean value);
+            boolean value);
     private native boolean nativeGetEnableSslFalseStart(long nativePoolAdapter);
+
+    private native void nativePreconnect(long nativePoolAdapter, String url,
+            int numStreams);
 }
 
