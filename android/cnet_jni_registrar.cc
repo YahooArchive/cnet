@@ -9,11 +9,11 @@
 #include "yahoo/cnet/cnet_fetcher.h"
 #include "yahoo/cnet/cnet_pool.h"
 #include "yahoo/cnet/cnet_response.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_Cnet.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_Fetcher.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_Pool.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_Response.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_ResponseCompletion.h"
+#include "yahoo/cnet/android/cnet_adapter.h"
+#include "yahoo/cnet/android/fetcher_adapter.h"
+#include "yahoo/cnet/android/pool_adapter.h"
+#include "yahoo/cnet/android/response_adapter.h"
+#include "yahoo/cnet/android/response_completion_adapter.h"
 
 namespace cnet {
 namespace android { 

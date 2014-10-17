@@ -1,15 +1,15 @@
 // Copyright 2014, Yahoo! Inc.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-#include "yahoo/cnet/android/com_yahoo_cnet_Fetcher.h"
+#include "yahoo/cnet/android/fetcher_adapter.h"
 
 #include "base/android/jni_android.h"
 #include "base/android/jni_array.h"
 #include "base/android/jni_string.h"
 #include "net/http/http_response_headers.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_Pool.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_Response.h"
-#include "yahoo/cnet/android/com_yahoo_cnet_ResponseCompletion.h"
+#include "yahoo/cnet/android/pool_adapter.h"
+#include "yahoo/cnet/android/response_adapter.h"
+#include "yahoo/cnet/android/response_completion_adapter.h"
 #include "yahoo/cnet/android/cnet_jni.h"
 #include "yahoo/cnet/cnet_fetcher.h"
 #include "yahoo/cnet/cnet_pool.h"

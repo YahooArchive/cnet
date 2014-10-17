@@ -1,7 +1,7 @@
 // Copyright 2014, Yahoo! Inc.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-#include "yahoo/cnet/android/com_yahoo_cnet_Pool.h"
+#include "yahoo/cnet/android/pool_adapter.h"
 
 #include "base/android/jni_android.h"
 #include "base/android/jni_string.h"

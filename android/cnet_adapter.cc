@@ -1,7 +1,7 @@
 // Copyright 2014, Yahoo! Inc.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-#include "yahoo/cnet/android/com_yahoo_cnet_Cnet.h"
+#include "yahoo/cnet/android/cnet_adapter.h"
 
 #include "yahoo/cnet/android/cnet_jni.h"
 #include "yahoo/cnet/cnet.h"
