@@ -15,12 +15,12 @@
 #include "base/files/file_util.h"
 #include "base/strings/stringprintf.h"
 #include "base/strings/string_number_conversions.h"
+#include "net/base/elements_upload_data_stream.h"
 #include "net/base/io_buffer.h"
 #include "net/base/load_flags.h"
 #include "net/base/load_timing_info.h"
 #include "net/base/net_errors.h"
 #include "net/base/upload_bytes_element_reader.h"
-#include "net/base/upload_data_stream.h"
 #include "net/base/upload_file_element_reader.h"
 #include "net/http/http_response_headers.h"
 #include "net/url_request/redirect_info.h"
@@ -269,6 +269,9 @@ bool Fetcher::BuildRequest() {
           scoped_ptr<net::UploadElementReader> reader(
               new net::UploadBytesElementReader(
                   upload_body_.data(), upload_body_.size()));
+          scoped_ptr<net::UploadDataStream> stream(
+              net::ElementsUploadDataStream::CreateWithReader(reader.Pass(), 0));
+          request_->set_upload(stream.Pass());
 
           request_->SetExtraRequestHeaderByName(
               net::HttpRequestHeaders::kContentType,
@@ -276,8 +279,6 @@ bool Fetcher::BuildRequest() {
           request_->SetExtraRequestHeaderByName(
               net::HttpRequestHeaders::kContentLength,
               base::IntToString(upload_body_.size()), true);
-          request_->set_upload(make_scoped_ptr(
-              net::UploadDataStream::CreateWithReader(reader.Pass(), 0)));
         } else {
           // Add a file upload to the multi-part form.
           mime::StartMultipartValueForPost(upload_param_key_, "filename",
@@ -300,12 +301,13 @@ bool Fetcher::BuildRequest() {
           readers.push_back(
               new net::UploadBytesElementReader( upload_body_terminator_.data(),
                   upload_body_terminator_.size()));
+          scoped_ptr<net::UploadDataStream> stream(
+              new net::ElementsUploadDataStream(readers.Pass(), 0));
+          request_->set_upload(stream.Pass());
 
           request_->SetExtraRequestHeaderByName(
               net::HttpRequestHeaders::kContentType,
               "multipart/form-data; boundary=" + mime_boundary, true);
-          request_->set_upload(make_scoped_ptr(
-              new net::UploadDataStream(readers.Pass(), 0)));
         }
       }
     } else if (!upload_body_.empty()) {
@@ -313,6 +315,9 @@ bool Fetcher::BuildRequest() {
       scoped_ptr<net::UploadElementReader> reader(
           new net::UploadBytesElementReader(
               upload_body_.data(), upload_body_.size()));
+      scoped_ptr<net::UploadDataStream> stream(
+          net::ElementsUploadDataStream::CreateWithReader(reader.Pass(), 0));
+      request_->set_upload(stream.Pass());
 
       if (!upload_content_type_.empty()) {
         request_->SetExtraRequestHeaderByName(
@@ -321,21 +326,20 @@ bool Fetcher::BuildRequest() {
       request_->SetExtraRequestHeaderByName(
           net::HttpRequestHeaders::kContentLength,
           base::IntToString(upload_body_.size()), true);
-      request_->set_upload(make_scoped_ptr(
-          net::UploadDataStream::CreateWithReader(reader.Pass(), 0)));
     } else if (!upload_file_path_.empty()) {
       // Send a file as the POST body.
       scoped_ptr<net::UploadElementReader> reader(
           new net::UploadFileElementReader(pool_->GetFileTaskRunner().get(),
               upload_file_path_, upload_range_offset_,
               upload_range_length_, base::Time()));
+      scoped_ptr<net::UploadDataStream> stream(
+          net::ElementsUploadDataStream::CreateWithReader(reader.Pass(), 0));
+      request_->set_upload(stream.Pass());
 
       if (!upload_content_type_.empty()) {
         request_->SetExtraRequestHeaderByName(
             net::HttpRequestHeaders::kContentType, upload_content_type_, true);
       }
-      request_->set_upload(make_scoped_ptr(
-          net::UploadDataStream::CreateWithReader(reader.Pass(), 0)));
     }
 
     return true;
