@@ -840,11 +840,15 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
 }
 
 void Fetcher::FinishRequest() {
+  scoped_ptr<net::HttpResponseInfo> response_info;
+  net::HttpResponseHeaders* response_headers = NULL;
   scoped_ptr<CnetLoadTiming> cnet_timing(new CnetLoadTiming);
   net::URLRequestStatus status(net::URLRequestStatus::FAILED, net::ERR_FAILED);
   int http_response_code = -1;
   if (request_ != NULL) {
     if (!output_failure_) {
+      response_info.reset(new net::HttpResponseInfo(request_->response_info()));
+      response_headers = request_->response_headers();
       status = request_->status();
       if (status.status() == net::URLRequestStatus::Status::SUCCESS) {
         http_response_code = request_->GetResponseCode();
@@ -875,7 +879,7 @@ void Fetcher::FinishRequest() {
   scoped_refptr<Response> response(new Response(initial_url_, gurl_,
       request_ != NULL ? request_->url():gurl_, read_buffer_,
       url_params_, cnet_timing.Pass(), status, http_response_code,
-      request_ != NULL ? request_->response_headers():NULL));
+      response_headers, response_info.Pass()));
   
   if (!completion.is_null()) {
     pool_->GetWorkTaskRunner()->PostTask(FROM_HERE,

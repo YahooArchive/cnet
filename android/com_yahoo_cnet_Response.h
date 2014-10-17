@@ -44,6 +44,11 @@ class ResponseAdapter {
   base::android::ScopedJavaLocalRef<jobjectArray> GetResponseHeader(
           JNIEnv* j_env, jobject j_caller, jstring j_header_name);
 
+  jboolean WasCached(JNIEnv* j_env, jobject j_caller);
+  jboolean WasFetchedViaProxy(JNIEnv* j_env, jobject j_caller);
+  jboolean WasFetchedViaSpdy(JNIEnv* j_env, jobject j_caller);
+  jboolean WasFetchedViaQuic(JNIEnv* j_env, jobject j_caller);
+
  private:
   scoped_refptr<cnet::Response> response_;
 

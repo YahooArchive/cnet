@@ -95,6 +95,23 @@ jint ResponseAdapter::GetNetError(JNIEnv* j_env, jobject j_caller) {
   return response_->status().error();
 }
 
+jboolean ResponseAdapter::WasCached(JNIEnv* j_env, jobject j_caller) {
+  return response_->was_cached();
+}
+
+jboolean ResponseAdapter::WasFetchedViaProxy(JNIEnv* j_env, jobject j_caller) {
+  return response_->was_fetched_via_proxy();
+}
+
+jboolean ResponseAdapter::WasFetchedViaSpdy(JNIEnv* j_env, jobject j_caller) {
+  return response_->was_fetched_via_spdy();
+}
+
+jboolean ResponseAdapter::WasFetchedViaQuic(JNIEnv* j_env, jobject j_caller) {
+  return response_->was_fetched_via_quic();
+}
+
+
 base::android::ScopedJavaLocalRef<jobjectArray>
 ResponseAdapter::GetResponseHeader(
     JNIEnv* j_env, jobject j_caller, jstring j_header_name) {

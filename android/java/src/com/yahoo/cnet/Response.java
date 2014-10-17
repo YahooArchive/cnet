@@ -142,6 +142,38 @@ public class Response {
         }
     }
 
+    public synchronized boolean wasCached() {
+        if (mNativeResponseAdapter != 0) {
+            return nativeWasCached(mNativeResponseAdapter);
+        } else {
+            return false;
+        }
+    }
+
+    public synchronized boolean wasFetchedViaProxy() {
+        if (mNativeResponseAdapter != 0) {
+            return nativeWasFetchedViaProxy(mNativeResponseAdapter);
+        } else {
+            return false;
+        }
+    }
+
+    public synchronized boolean wasFetchedViaSpdy() {
+        if (mNativeResponseAdapter != 0) {
+            return nativeWasFetchedViaSpdy(mNativeResponseAdapter);
+        } else {
+            return false;
+        }
+    }
+
+    public synchronized boolean wasFetchedViaQuic() {
+        if (mNativeResponseAdapter != 0) {
+            return nativeWasFetchedViaQuic(mNativeResponseAdapter);
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Release the native resources used by this object.
      * This ensures immediate recovery of native memory, instead of waiting
@@ -184,5 +216,9 @@ public class Response {
             long nativeResponseAdapter);
     private native String[] nativeGetResponseHeader(long nativeResponseAdapter,
             String headerName);
+    private native boolean nativeWasCached(long nativeResponseAdapter);
+    private native boolean nativeWasFetchedViaProxy(long nativeResponseAdapter);
+    private native boolean nativeWasFetchedViaSpdy(long nativeResponseAdapter);
+    private native boolean nativeWasFetchedViaQuic(long nativeResponseAdapter);
 }
 

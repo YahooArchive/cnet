@@ -5,6 +5,7 @@
 #define YAHOO_CNET_CNET_RESPONSE_H_
 
 #include "base/memory/ref_counted.h"
+#include "net/http/http_response_info.h"
 #include "net/url_request/url_request_status.h"
 #include "url/gurl.h"
 #include "yahoo/cnet/cnet_url_params.h"
@@ -26,7 +27,8 @@ class Response : public base::RefCountedThreadSafe<Response> {
       const UrlParams& url_params,
       scoped_ptr<CnetLoadTiming> load_timing,
       const net::URLRequestStatus& status, int http_response_code,
-      scoped_refptr<net::HttpResponseHeaders> response_headers);
+      scoped_refptr<net::HttpResponseHeaders> response_headers,
+      scoped_ptr<net::HttpResponseInfo> response_info);
 
   const std::string& initial_url() { return initial_url_; }
   const GURL& original_url() { return original_url_; }
@@ -37,6 +39,24 @@ class Response : public base::RefCountedThreadSafe<Response> {
   int http_response_code() { return http_response_code_; }
   scoped_refptr<net::HttpResponseHeaders> response_headers() {
     return response_headers_;
+  }
+
+  bool was_cached() const {
+    return (response_info_ != NULL) && response_info_->was_cached;
+  }
+
+  bool was_fetched_via_proxy() const {
+    return (response_info_ != NULL) && response_info_->was_fetched_via_proxy;
+  }
+
+  bool was_fetched_via_spdy() const {
+    return (response_info_ != NULL) && response_info_->was_fetched_via_spdy;
+  }
+
+  bool was_fetched_via_quic() const {
+    return (response_info_ != NULL) &&
+        (response_info_->connection_info ==
+            net::HttpResponseInfo::CONNECTION_INFO_QUIC1_SPDY3);
   }
 
   const char *response_body();
@@ -52,6 +72,7 @@ class Response : public base::RefCountedThreadSafe<Response> {
   net::URLRequestStatus status_;
   int http_response_code_;
   scoped_refptr<net::HttpResponseHeaders> response_headers_;
+  scoped_ptr<net::HttpResponseInfo> response_info_;
 
   virtual ~Response();
   friend class base::RefCountedThreadSafe<Response>;
