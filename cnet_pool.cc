@@ -38,7 +38,7 @@ class SSLConfigService : public net::SSLConfigService {
   SSLConfigService(bool enable_ssl_false_start);
 
   // Overrides from net::SSLConfigService:
-  virtual void GetSSLConfig(net::SSLConfig* config) OVERRIDE;
+  virtual void GetSSLConfig(net::SSLConfig* config) override;
 
  private:
   virtual ~SSLConfigService();

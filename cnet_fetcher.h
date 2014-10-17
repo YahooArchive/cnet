@@ -112,13 +112,13 @@ class Fetcher : public net::URLRequest::Delegate,
   // Overrides for URLRequest::Delegate.
   // These are invoked on the original thread that started the request.
   virtual void OnBeforeNetworkStart(net::URLRequest* request,
-      bool* defer) OVERRIDE;
+      bool* defer) override;
   virtual void OnReceivedRedirect(net::URLRequest* request,
       const net::RedirectInfo& redirect_info,
-      bool* defer_redirect) OVERRIDE;
-  virtual void OnResponseStarted(net::URLRequest* request) OVERRIDE;
+      bool* defer_redirect) override;
+  virtual void OnResponseStarted(net::URLRequest* request) override;
   virtual void OnReadCompleted(net::URLRequest* request,
-      int bytes_read) OVERRIDE;
+      int bytes_read) override;
 
  private:
   bool BuildRequest();

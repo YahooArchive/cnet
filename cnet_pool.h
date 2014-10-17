@@ -102,9 +102,9 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
 
     // Overrides from net::URLRequestContextGetter
     // Note: GetURLRequestContext() is for use on the network thread.
-    virtual net::URLRequestContext* GetURLRequestContext() OVERRIDE;
+    virtual net::URLRequestContext* GetURLRequestContext() override;
     virtual scoped_refptr<base::SingleThreadTaskRunner>
-        GetNetworkTaskRunner() const OVERRIDE;
+        GetNetworkTaskRunner() const override;
 
    private:
     net::URLRequestContext* context_;

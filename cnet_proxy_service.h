@@ -14,19 +14,22 @@ class ProxyConfigService : public net::ProxyConfigService,
   ProxyConfigService();
   virtual ~ProxyConfigService();
 
-  void ActivateSystemProxyService(net::ProxyConfigService* system_proxy_service);
+  void ActivateSystemProxyService(net::ProxyConfigService*
+      system_proxy_service);
 
   void SetProxyConfig(const std::string& rules);
 
   // net::ProxyConfigService methods
-  virtual void AddObserver(net::ProxyConfigService::Observer* observer) OVERRIDE;
-  virtual void RemoveObserver(net::ProxyConfigService::Observer* observer) OVERRIDE;
+  virtual void AddObserver(net::ProxyConfigService::Observer* observer)
+      override;
+  virtual void RemoveObserver(net::ProxyConfigService::Observer* observer)
+      override;
   virtual net::ProxyConfigService::ConfigAvailability
-      GetLatestProxyConfig(net::ProxyConfig* config) OVERRIDE;
+      GetLatestProxyConfig(net::ProxyConfig* config) override;
 
   // net::ProxyConfigService::Observer method
   virtual void OnProxyConfigChanged(const net::ProxyConfig& config,
-      net::ProxyConfigService::ConfigAvailability availability) OVERRIDE;
+      net::ProxyConfigService::ConfigAvailability availability) override;
 
  private:
   net::ProxyConfigService::ConfigAvailability status_;

@@ -56,7 +56,7 @@ class PoolSyncDrainer : public Pool::Observer {
 
   void Drain();
 
-  virtual void OnPoolIdle(scoped_refptr<Pool> pool) OVERRIDE;
+  virtual void OnPoolIdle(scoped_refptr<Pool> pool) override;
 
  private:
   void OnWorkDrained();
