@@ -86,7 +86,19 @@ void GetCompletion(CnetFetcher fetcher, CnetResponse response, void* param) {
   LOG(INFO) << "send (ms): " << timing->send_ms;
   LOG(INFO) << "headers receive (ms): " << timing->headers_receive_ms;
   LOG(INFO) << "data receive (ms): " << timing->data_receive_ms;
-  
+  if (CnetResponseWasCached(response)) {
+    LOG(INFO) << "from cache";
+  }
+  if (CnetResponseWasFetchedViaProxy(response)) {
+    LOG(INFO) << "fetched via a proxy";
+  }
+  if (CnetResponseWasFetchedViaSpdy(response)) {
+    LOG(INFO) << "fetched via SPDY";
+  }
+  if (CnetResponseWasFetchedViaQuic(response)) {
+    LOG(INFO) << "fetched via QUIC";
+  }
+
   if (content_type != NULL) {
     free(content_type);
   }
@@ -162,6 +174,7 @@ int main(int argc, char* argv[]) {
   CnetPoolDefaultConfigPrepare(&pool_config);
   pool_config.user_agent = "cnet-util";
   pool_config.enable_spdy = 1;
+  pool_config.enable_quic = 1;
   pool_config.cache_path = (cache_path.empty()) ? NULL:cache_path.c_str();
   pool_config.cache_max_bytes = 40*1024;
   pool_config.trust_all_cert_authorities = trust_all_cert_authorities;

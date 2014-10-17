@@ -347,6 +347,14 @@ CNET_EXPORT int CnetResponseHttpCode(CnetResponse response);
 // matching header.  You must free the memory when finished with it.
 CNET_EXPORT char* CnetResponseFirstHeaderCopy(CnetResponse response,
     const char* header_name);
+// Returns non-zero if the response was fetched from the cache.
+CNET_EXPORT int CnetResponseWasCached(CnetResponse response);
+// Returns non-zero if the request used a proxy.
+CNET_EXPORT int CnetResponseWasFetchedViaProxy(CnetResponse response);
+// Returns non-zero if the request used the SPDY protocol.
+CNET_EXPORT int CnetResponseWasFetchedViaSpdy(CnetResponse response);
+// Returns non-zero if the request used the QUIC protocol.
+CNET_EXPORT int CnetResponseWasFetchedViaQuic(CnetResponse response);
 
 #ifdef __cplusplus
 };

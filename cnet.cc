@@ -608,5 +608,37 @@ char* CnetResponseFirstHeaderCopy(CnetResponse raw_response,
   return header_value;
 }
 
+int CnetResponseWasCached(CnetResponse response) {
+  if (response != NULL) {
+    return static_cast<cnet::Response*>(response)->was_cached();
+  } else {
+    return 0;
+  }
+}
+
+int CnetResponseWasFetchedViaProxy(CnetResponse response) {
+  if (response != NULL) {
+    return static_cast<cnet::Response*>(response)->was_fetched_via_proxy();
+  } else {
+    return 0;
+  }
+}
+
+int CnetResponseWasFetchedViaSpdy(CnetResponse response) {
+  if (response != NULL) {
+    return static_cast<cnet::Response*>(response)->was_fetched_via_spdy();
+  } else {
+    return 0;
+  }
+}
+
+int CnetResponseWasFetchedViaQuic(CnetResponse response) {
+  if (response != NULL) {
+    return static_cast<cnet::Response*>(response)->was_fetched_via_quic();
+  } else {
+    return 0;
+  }
+}
+
 };
 
