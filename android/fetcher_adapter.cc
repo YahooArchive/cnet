@@ -176,7 +176,7 @@ void FetcherAdapter::InvokeCompletion(
   JNIEnv* j_env = base::android::AttachCurrentThread();
   {
     base::android::ScopedJavaLocalRef<jobject> response_local;
-    if (response != NULL) {
+    if (response.get() != NULL) {
       response_local = ResponseAdapter::CreateFromNative(j_env, response);
     }
 

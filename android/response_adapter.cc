@@ -35,7 +35,7 @@ base::android::ScopedJavaLocalRef<jobject> ResponseAdapter::CreateFromNative(
 
 ResponseAdapter::ResponseAdapter(scoped_refptr<cnet::Response> response)
     : response_(response) {
-  DCHECK(response != NULL);
+  DCHECK(response.get() != NULL);
 }
 
 ResponseAdapter::~ResponseAdapter() {
