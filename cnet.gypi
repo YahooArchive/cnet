@@ -106,7 +106,7 @@
             ],
             'dependencies': [
               'cnet_jni_headers',
-              'cnet_java_internal',
+              'cnet_java',
             ],
         }],
       ],
@@ -175,17 +175,6 @@
         },
         {
           'target_name': 'cnet_java',
-          'type': 'none',
-          'dependencies': [
-            '<(DEPTH)/base/base.gyp:base',
-          ],
-          'variables': {
-            'java_in_dir': 'android/java',
-          },
-          'includes': [ '../../build/java.gypi' ],
-        },
-        {
-          'target_name': 'cnet_java_internal',
           'type': 'none',
           'dependencies': [
             '<(DEPTH)/base/base.gyp:base',
