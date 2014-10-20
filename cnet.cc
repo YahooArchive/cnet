@@ -175,6 +175,13 @@ void CnetPoolSetEnableSslFalseStart(CnetPool pool, int enabled) {
   }
 }
 
+void CnetPoolAddQuicHint(CnetPool pool, const char* host, uint16_t port,
+    uint16_t alternate_port) {
+  if ((pool != NULL) && (host != NULL)) {
+    static_cast<cnet::Pool*>(pool)->AddQuicHint(host, port, alternate_port);
+  }
+}
+
 void CnetPoolSetTrustAllCertAuthorities(CnetPool pool, int enabled) {
   if (pool != NULL) {
     static_cast<cnet::Pool*>(pool)->SetTrustAllCertAuthorities(enabled != 0);
@@ -619,6 +626,14 @@ int CnetResponseWasCached(CnetResponse response) {
 int CnetResponseWasFetchedViaProxy(CnetResponse response) {
   if (response != NULL) {
     return static_cast<cnet::Response*>(response)->was_fetched_via_proxy();
+  } else {
+    return 0;
+  }
+}
+
+int CnetResponseWasFetchedViaHttp(CnetResponse response) {
+  if (response != NULL) {
+    return static_cast<cnet::Response*>(response)->was_fetched_via_http();
   } else {
     return 0;
   }

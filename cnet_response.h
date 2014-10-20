@@ -49,6 +49,12 @@ class Response : public base::RefCountedThreadSafe<Response> {
     return (response_info_ != NULL) && response_info_->was_fetched_via_proxy;
   }
 
+  bool was_fetched_via_http() const {
+    return (response_info_ != NULL) &&
+        (response_info_->connection_info ==
+            net::HttpResponseInfo::CONNECTION_INFO_HTTP1);
+  }
+
   bool was_fetched_via_spdy() const {
     return (response_info_ != NULL) && response_info_->was_fetched_via_spdy;
   }

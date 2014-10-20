@@ -96,6 +96,17 @@ jboolean PoolAdapter::GetEnableSslFalseStart(JNIEnv* j_env, jobject j_caller) {
   return pool_->get_ssl_false_start();
 }
 
+void PoolAdapter::AddQuicHint(JNIEnv* j_env, jobject j_caller,
+    jstring j_host, jint j_port, jint j_alternate_port) {
+  if ((j_host != NULL) && (j_port > 0) && (j_alternate_port > 0) &&
+      (j_port <= std::numeric_limits<uint16>::max()) &&
+      (j_alternate_port <= std::numeric_limits<uint16>::max())) {
+    std::string host = base::android::ConvertJavaStringToUTF8(j_env, j_host);
+    pool_->AddQuicHint(host, static_cast<uint16>(j_port),
+        static_cast<uint16>(j_alternate_port));
+  }
+}
+
 void PoolAdapter::Preconnect(JNIEnv* j_env, jobject j_caller, jstring j_url,
     jint j_num_streams) {
   if ((j_num_streams > 0) && (j_url != NULL)) {

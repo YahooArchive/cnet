@@ -37,6 +37,9 @@ class PoolAdapter {
       jboolean j_value);
   jboolean GetEnableSslFalseStart(JNIEnv* j_env, jobject j_caller);
 
+  void AddQuicHint(JNIEnv* j_env, jobject j_caller, jstring j_host,
+      jint j_port, jint j_alternate_port);
+
   void Preconnect(JNIEnv* j_env, jobject j_caller, jstring j_url,
       jint j_num_streams);
 

@@ -198,6 +198,12 @@ void Pool::InitializeURLRequestContext(
   context_.reset(context_builder.Build());
   context_->set_ssl_config_service(
       new SSLConfigService(enable_ssl_false_start_));
+  if (enable_quic_) {
+    // Set the alternate-protocol threshold, so that we can register
+    // QUIC as an alternate protocol for specific hosts.
+    context_->http_server_properties()->
+        SetAlternateProtocolProbabilityThreshold(0.0f);
+  }
 
   pool_context_getter_ = new PoolContextGetter(context_.get(),
       GetNetworkTaskRunner());
@@ -271,6 +277,19 @@ void Pool::SetEnableSslFalseStart(bool value) {
       new SSLConfigService(enable_ssl_false_start_));
 }
 
+void Pool::AddQuicHint(const std::string& host, uint16 port,
+    uint16 alternate_port) {
+  if (!GetNetworkTaskRunner()->RunsTasksOnCurrentThread()) {
+    GetNetworkTaskRunner()->PostTask(FROM_HERE,
+        base::Bind(&Pool::AddQuicHint, this, host, port, alternate_port));
+    return;
+  }
+
+  net::HostPortPair host_port(host, port);
+  context_->http_server_properties()->SetAlternateProtocol(host_port,
+      alternate_port, net::AlternateProtocol::QUIC, 1.0f);
+}
+  
 scoped_refptr<base::SingleThreadTaskRunner> Pool::GetNetworkTaskRunner() const {
   return network_thread_->task_runner();
 }

@@ -92,6 +92,9 @@ void GetCompletion(CnetFetcher fetcher, CnetResponse response, void* param) {
   if (CnetResponseWasFetchedViaProxy(response)) {
     LOG(INFO) << "fetched via a proxy";
   }
+  if (CnetResponseWasFetchedViaHttp(response)) {
+    LOG(INFO) << "fetched via HTTP";
+  }
   if (CnetResponseWasFetchedViaSpdy(response)) {
     LOG(INFO) << "fetched via SPDY";
   }
@@ -165,6 +168,8 @@ int main(int argc, char* argv[]) {
   std::string upload_key(command_line.GetSwitchValueASCII("upload-key"));
   std::string output_path(command_line.GetSwitchValueASCII("output-path"));
   std::string min_speed(command_line.GetSwitchValueASCII("min-speed"));
+  std::string quic_host(command_line.GetSwitchValueASCII("quic-host"));
+  std::string quic_port_str(command_line.GetSwitchValueASCII("quic-port"));
 
   base::MessageLoopForUI ui_loop;
 
@@ -182,6 +187,16 @@ int main(int argc, char* argv[]) {
   CnetPool pool = CnetPoolCreate(static_cast<CnetMessageLoopForUi>(&ui_loop),
       pool_config);
   CnetPoolSetProxy(pool, proxy_rules.c_str());
+  if (!quic_host.empty() && !quic_port_str.empty()) {
+    unsigned quic_port;
+    if (base::StringToUint(quic_port_str, &quic_port)) {
+      if (quic_port > std::numeric_limits<uint16>::min() &&
+          quic_port <= std::numeric_limits<uint16>::max()) {
+        CnetPoolAddQuicHint(pool, quic_host.c_str(), 80, quic_port);
+        CnetPoolAddQuicHint(pool, quic_host.c_str(), 443, quic_port);
+      }
+    }
+  }
 
   std::string params_encoding(command_line.GetSwitchValueASCII("encoding"));
   base::StringPairs fetch_params;

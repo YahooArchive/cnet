@@ -90,6 +90,13 @@ public class Pool {
         }
     }
 
+    public synchronized void addQuicHint(String host, int port,
+            int alternatePort) {
+        if (mNativePoolAdapter != 0) {
+            nativeAddQuicHint(mNativePoolAdapter, host, port, alternatePort);
+        }
+    }
+
     /**
      * Preconnect to a remote host for use by future Fetchers.
      * It will preconnect multiple streams.
@@ -132,6 +139,9 @@ public class Pool {
     private native void nativeSetEnableSslFalseStart(long nativePoolAdapter,
             boolean value);
     private native boolean nativeGetEnableSslFalseStart(long nativePoolAdapter);
+
+    private native void nativeAddQuicHint(long nativePoolAdapter, String host,
+            int port, int alternatePort);
 
     private native void nativePreconnect(long nativePoolAdapter, String url,
             int numStreams);

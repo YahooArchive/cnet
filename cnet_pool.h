@@ -72,6 +72,8 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
   void SetEnableSslFalseStart(bool value);
   bool get_ssl_false_start() { return enable_ssl_false_start_; }
 
+  void AddQuicHint(const std::string& host, uint16 port, uint16 alternate_port);
+
   void AddObserver(Observer* observer);
   void RemoveObserver(Observer* observer);
 

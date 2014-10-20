@@ -95,6 +95,9 @@ CNET_EXPORT void CnetPoolSetProxy(CnetPool pool, const char* rules);
 // Enable or disable SSL False Start for all future network connections.
 CNET_EXPORT void CnetPoolSetEnableSslFalseStart(CnetPool pool, int enabled);
 
+CNET_EXPORT void CnetPoolAddQuicHint(CnetPool pool, const char* host,
+    uint16_t port, uint16_t alternate_port);
+
 // Trust or distrust self-signed root certificate authorities.  This
 // manipulates debug builds only.  Useful for Charles Proxy.
 CNET_EXPORT void CnetPoolSetTrustAllCertAuthorities(CnetPool pool, int enabled);
@@ -351,6 +354,8 @@ CNET_EXPORT char* CnetResponseFirstHeaderCopy(CnetResponse response,
 CNET_EXPORT int CnetResponseWasCached(CnetResponse response);
 // Returns non-zero if the request used a proxy.
 CNET_EXPORT int CnetResponseWasFetchedViaProxy(CnetResponse response);
+// Returns non-zero if the request used the HTTP protocol.
+CNET_EXPORT int CnetResponseWasFetchedViaHttp(CnetResponse response);
 // Returns non-zero if the request used the SPDY protocol.
 CNET_EXPORT int CnetResponseWasFetchedViaSpdy(CnetResponse response);
 // Returns non-zero if the request used the QUIC protocol.
