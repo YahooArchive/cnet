@@ -7,6 +7,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Testing documentation:
+//   https://code.google.com/p/googletest/wiki/Primer
+//   https://www.chromium.org/developers/testing
+
 #include "base/metrics/statistics_recorder.h"
 #include "base/run_loop.h"
 #include "base/test/launcher/unit_test_launcher.h"
