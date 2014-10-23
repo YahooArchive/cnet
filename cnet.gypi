@@ -136,6 +136,24 @@
         }],
       ],
     },
+    {
+      'target_name': 'cnet_unittests',
+      'type': '<(gtest_target_type)',
+      'dependencies': [
+        '<(DEPTH)/base/base.gyp:base',
+        '<(DEPTH)/base/base.gyp:base_i18n',
+        '<(DEPTH)/url/url.gyp:url_lib',
+        '<(DEPTH)/net/net.gyp:net',
+        '<(DEPTH)/net/net.gyp:net_test_support',
+        '<(DEPTH)/testing/gtest.gyp:gtest',
+      ],
+      'sources': [
+        '<@(cnet_sources)',
+        'cnet_unittest.cc',
+        '<(DEPTH)/net/test/net_test_suite.cc',
+        '<(DEPTH)/net/test/net_test_suite.h',
+      ],
+    },
   ],
   'conditions': [
     ['OS=="android"', {
