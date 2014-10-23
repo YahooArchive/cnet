@@ -277,6 +277,7 @@ void Pool::SetEnableSslFalseStart(bool value) {
       new SSLConfigService(enable_ssl_false_start_));
 }
 
+// Inspired by URLRequestContextAdapter::InitRequestContextOnNetworkThread()
 void Pool::AddQuicHint(const std::string& host, uint16 port,
     uint16 alternate_port) {
   if (!GetNetworkTaskRunner()->RunsTasksOnCurrentThread()) {
@@ -285,11 +286,18 @@ void Pool::AddQuicHint(const std::string& host, uint16 port,
     return;
   }
 
-  net::HostPortPair host_port(host, port);
-  context_->http_server_properties()->SetAlternateProtocol(host_port,
-      alternate_port, net::AlternateProtocol::QUIC, 1.0f);
+  url::CanonHostInfo host_info;
+  std::string canon_host(net::CanonicalizeHost(host, &host_info));
+  if (host_info.IsIPAddress() ||
+      net::IsCanonicalizedHostCompliant(canon_host)) {
+    net::HostPortPair host_port(host, port);
+    context_->http_server_properties()->SetAlternateProtocol(host_port,
+        alternate_port, net::AlternateProtocol::QUIC, 1.0f);
+  } else {
+    LOG(ERROR) << "Invalid QUIC hint host: " << host;
+  }
 }
-  
+
 scoped_refptr<base::SingleThreadTaskRunner> Pool::GetNetworkTaskRunner() const {
   return network_thread_->task_runner();
 }
