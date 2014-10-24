@@ -98,7 +98,7 @@ provides the response on a background thread.
 
 To stop a fetcher, you must invoke its cancel method --- trying to
 delete the fetcher will not stop its execution (it retains a reference
-to itself, to protect against race conditions in garbage-collected
+to itself, to provide deterministic behavior in garbage-collected
 environments).  A fetcher always executes its completion callback,
 even when cancelled.
 
