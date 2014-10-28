@@ -17,7 +17,7 @@
 #include "yahoo/cnet/cnet_response.h"
 
 // Generated headers
-#include "jni/Fetcher_jni.h"
+#include "jni/CnetFetcher_jni.h"
 
 namespace cnet {
 namespace android {
@@ -28,7 +28,7 @@ bool FetcherAdapterRegisterJni(JNIEnv* j_env) {
 }
 
 void InvokeFetcherRelease(JNIEnv* j_env, jobject j_fetcher) {
-  Java_Fetcher_release(j_env, j_fetcher);
+  Java_CnetFetcher_release(j_env, j_fetcher);
 }
 
 jlong CreateFetcherAdapter(JNIEnv* j_env, jobject j_caller, jobject j_pool,

@@ -10,7 +10,7 @@
 #include "yahoo/cnet/cnet_pool.h"
 
 // Generated headers
-#include "jni/Pool_jni.h"
+#include "jni/CnetPool_jni.h"
 
 namespace cnet {
 namespace android {
@@ -22,8 +22,8 @@ bool PoolAdapterRegisterJni(JNIEnv* j_env) {
 
 /* static */
 PoolAdapter* PoolAdapter::PoolAdapterFromObject(JNIEnv* j_env, jobject j_object) {
-  return reinterpret_cast<PoolAdapter*>(Java_Pool_getNativePoolAdapter(j_env,
-      j_object));
+  return reinterpret_cast<PoolAdapter*>(Java_CnetPool_getNativePoolAdapter(
+      j_env, j_object));
 }
 
 static jlong CreatePoolAdapter(JNIEnv* j_env, jobject j_caller,

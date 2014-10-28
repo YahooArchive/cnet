@@ -12,7 +12,7 @@
 #include "yahoo/cnet/cnet_response.h"
 
 // Generated headers
-#include "jni/Response_jni.h"
+#include "jni/CnetResponse_jni.h"
 
 namespace cnet {
 namespace android {
@@ -23,14 +23,15 @@ bool ResponseAdapterRegisterJni(JNIEnv* j_env) {
 }
 
 void InvokeResponseRelease(JNIEnv* j_env, jobject j_response) {
-  Java_Response_release(j_env, j_response);
+  Java_CnetResponse_release(j_env, j_response);
 }
 
 /* static */
 base::android::ScopedJavaLocalRef<jobject> ResponseAdapter::CreateFromNative(
     JNIEnv* j_env, scoped_refptr<cnet::Response> response) {
   ResponseAdapter* response_adapter = new ResponseAdapter(response);
-  return Java_Response_create(j_env, reinterpret_cast<jlong>(response_adapter));
+  return Java_CnetResponse_create(j_env, reinterpret_cast<jlong>(
+      response_adapter));
 }
 
 ResponseAdapter::ResponseAdapter(scoped_refptr<cnet::Response> response)

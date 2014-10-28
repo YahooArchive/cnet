@@ -163,9 +163,9 @@
           'type': 'none',
           'sources': [
             'android/java/src/com/yahoo/cnet/Cnet.java',
-            'android/java/src/com/yahoo/cnet/Fetcher.java',
-            'android/java/src/com/yahoo/cnet/Pool.java',
-            'android/java/src/com/yahoo/cnet/Response.java',
+            'android/java/src/com/yahoo/cnet/CnetFetcher.java',
+            'android/java/src/com/yahoo/cnet/CnetPool.java',
+            'android/java/src/com/yahoo/cnet/CnetResponse.java',
             'android/java/src/com/yahoo/cnet/ResponseCompletion.java',
           ],
           'variables': {
