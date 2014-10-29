@@ -18,14 +18,14 @@ Cnet.loadLibraries(appContext);
 Cnet.initLibraryOnUiThread(appContext);
 
 // Establish a Cnet Pool for connection reuse.
-final Pool.Config poolConfig = new Pool.Config();
+final CnetPool.Config poolConfig = new CnetPool.Config();
 poolConfig.userAgent = "cnet-test";
 poolConfig.enableSpdy = true;
 poolConfig.enableSslFalseStart = true;
-final Pool pool = new Pool(poolConfig);
+final CnetPool pool = new CnetPool(poolConfig);
 
 // Create an HTTP request.
-final Fetcher fetcher = new Fetcher(pool, "https://yahoo.com", "GET", new ResponseCompletion() {
+final Fetcher fetcher = pool.createFetcher("https://yahoo.com", "GET", new ResponseCompletion() {
     @Override
     public boolean onBackgroundComplete(Fetcher fetcher, Response response) {
         Log.d(LOG_TAG, "request completed, " + response.getHttpResponseCode() + 
