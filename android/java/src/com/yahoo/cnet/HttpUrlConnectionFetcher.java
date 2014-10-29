@@ -64,6 +64,10 @@ public class HttpUrlConnectionFetcher implements Fetcher {
                             if (mPool.getUserAgent() != null) {
                                 conn.setRequestProperty("User-Agent", mPool.getUserAgent());
                             }
+                            if (mMethod != null) {
+                                conn.setRequestMethod(mMethod);
+                            }
+                            conn.setInstanceFollowRedirects(true); // TODO
                         } else {
                             Log.w(LOG_TAG, "Not an HTTP connection: " + originalUrl.toString());
                         }
@@ -76,6 +80,7 @@ public class HttpUrlConnectionFetcher implements Fetcher {
                         ByteArrayOutputStream baos = null;
                         int contentLength = 0;
                         try {
+                            // The connection now starts.
                             httpResponseCode = conn.getResponseCode();
                             responseHeaders = conn.getHeaderFields();
                             contentLength = conn.getContentLength();
@@ -107,7 +112,11 @@ public class HttpUrlConnectionFetcher implements Fetcher {
                                 }
                             }
                         }
-                        if (!isCancelled() && (baos != null)) {
+                        if (isCancelled() || (in == null) || (baos == null)) {
+                            // If we didn't consume all bytes from the socket,
+                            // then it probably isn't safe for reuse.
+                            conn.disconnect();
+                        } else if (baos != null) {
                             responseBody = baos.toByteArray();
                         }
                     }
