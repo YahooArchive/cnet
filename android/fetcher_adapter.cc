@@ -31,9 +31,15 @@ void InvokeFetcherRelease(JNIEnv* j_env, jobject j_fetcher) {
   Java_CnetFetcher_release(j_env, j_fetcher);
 }
 
-jlong CreateFetcherAdapter(JNIEnv* j_env, jobject j_caller, jobject j_pool,
-    jstring j_url, jstring j_method, jobject j_completion) {
-  PoolAdapter* pool_adapter = PoolAdapter::PoolAdapterFromObject(j_env, j_pool);
+/* static */
+jlong FetcherAdapter::CreateFetcherAdapter(PoolAdapter* pool_adapter,
+    JNIEnv* j_env, jobject j_caller, jstring j_url, jstring j_method,
+    jobject j_completion) {
+  DCHECK(pool_adapter != NULL);
+  if (pool_adapter == NULL) {
+    return 0;
+  }
+
   std::string url = base::android::ConvertJavaStringToUTF8(j_env, j_url);
   std::string method = base::android::ConvertJavaStringToUTF8(j_env, j_method);
 
@@ -174,6 +180,7 @@ void FetcherAdapter::InvokeCompletion(
     scoped_refptr<cnet::Response> response) {
   // We are on a background thread.
   JNIEnv* j_env = base::android::AttachCurrentThread();
+  CHECK(j_env != NULL);
   {
     base::android::ScopedJavaLocalRef<jobject> response_local;
     if (response.get() != NULL) {

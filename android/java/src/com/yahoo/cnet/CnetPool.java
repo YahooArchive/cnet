@@ -41,9 +41,11 @@ public class CnetPool implements Pool {
     }
 
     @Override
-    public synchronized Fetcher createFetcher(String url, String method, ResponseCompletion responseCompletion) {
+    public synchronized Fetcher createFetcher(String url, String method,
+            ResponseCompletion responseCompletion) {
         if (mNativePoolAdapter != 0) {
-            CnetFetcher fetcher = new CnetFetcher(this, url, method, responseCompletion);
+            CnetFetcher fetcher = new CnetFetcher(mNativePoolAdapter, url,
+                    method, responseCompletion);
             return fetcher;
         } else {
             return null;
@@ -108,11 +110,6 @@ public class CnetPool implements Pool {
     protected void finalize() throws Throwable {
         release();
         super.finalize();
-    }
-
-    @CalledByNative
-    private synchronized long getNativePoolAdapter() {
-        return mNativePoolAdapter;
     }
 
     private long mNativePoolAdapter;

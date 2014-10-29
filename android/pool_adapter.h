@@ -18,12 +18,13 @@ bool PoolAdapterRegisterJni(JNIEnv* j_env);
 
 class PoolAdapter {
  public:
-  static PoolAdapter* PoolAdapterFromObject(JNIEnv* j_env, jobject j_object);
-
   PoolAdapter(scoped_refptr<cnet::Pool> pool);
   ~PoolAdapter();
 
   scoped_refptr<cnet::Pool> pool() { return pool_; }
+
+  jlong CreateFetcherAdapter(JNIEnv* j_env, jobject j_caller,
+      jstring j_url, jstring j_method, jobject j_completion);
 
   void ReleasePoolAdapter(JNIEnv* j_env, jobject j_caller);
 

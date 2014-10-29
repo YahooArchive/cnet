@@ -6,6 +6,7 @@
 #include "base/android/jni_android.h"
 #include "base/android/jni_string.h"
 #include "yahoo/cnet/android/cnet_jni.h"
+#include "yahoo/cnet/android/fetcher_adapter.h"
 #include "yahoo/cnet/cnet.h"
 #include "yahoo/cnet/cnet_pool.h"
 
@@ -18,12 +19,6 @@ namespace android {
 bool PoolAdapterRegisterJni(JNIEnv* j_env) {
   // Register the generated JNI methods.
   return RegisterNativesImpl(j_env);
-}
-
-/* static */
-PoolAdapter* PoolAdapter::PoolAdapterFromObject(JNIEnv* j_env, jobject j_object) {
-  return reinterpret_cast<PoolAdapter*>(Java_CnetPool_getNativePoolAdapter(
-      j_env, j_object));
 }
 
 static jlong CreatePoolAdapter(JNIEnv* j_env, jobject j_caller,
@@ -113,6 +108,12 @@ void PoolAdapter::Preconnect(JNIEnv* j_env, jobject j_caller, jstring j_url,
     std::string url = base::android::ConvertJavaStringToUTF8(j_env, j_url);
     pool_->Preconnect(url, j_num_streams);
   }
+}
+
+jlong PoolAdapter::CreateFetcherAdapter(JNIEnv* j_env, jobject j_caller,
+    jstring j_url, jstring j_method, jobject j_completion) {
+  return FetcherAdapter::CreateFetcherAdapter(this, j_env, j_caller,
+      j_url, j_method, j_completion);
 }
 
 } // namespace android

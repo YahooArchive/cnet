@@ -10,20 +10,10 @@ import java.util.Map;
 
 @JNINamespace("cnet::android")
 public class CnetFetcher implements Fetcher {
-    /**
-     * Create a fetcher to perform a URL request.
-     * The fetcher is prepared to run, but isn't active yet.  You must
-     * separately start the fetch to activate it.
-     * @param pool The Cnet pool to provide resources for the request.
-     * @param url The URL of the request.
-     * @param method The HTTP method, such as "GET", "POST", "PUT", etc.
-     * @param responseCompletion The asynchronous completion, which will
-     *        run on a background thread.
-     */
-    public CnetFetcher(Pool pool, String url, String method,
+    CnetFetcher(long nativePoolAdapter, String url, String method,
             ResponseCompletion responseCompletion) {
-        mNativeFetcherAdapter = nativeCreateFetcherAdapter(pool, url, method,
-                responseCompletion);
+        mNativeFetcherAdapter = nativeCreateFetcherAdapter(nativePoolAdapter,
+                url, method, responseCompletion);
     }
 
     @Override
@@ -147,8 +137,8 @@ public class CnetFetcher implements Fetcher {
 
     private long mNativeFetcherAdapter;
 
-    private native long nativeCreateFetcherAdapter(Pool pool, String url,
-            String method, ResponseCompletion responseCompletion);
+    private native long nativeCreateFetcherAdapter(long nativePoolAdapter,
+            String url, String method, ResponseCompletion responseCompletion);
     private native void nativeReleaseFetcherAdapter(long nativeFetcherAdapter);
 
     private native void nativeStart(long nativeFetcherAdapter);

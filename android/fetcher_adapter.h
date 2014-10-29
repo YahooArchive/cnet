@@ -15,6 +15,7 @@ class Fetcher;
 class Response;
 
 namespace android {
+class PoolAdapter;
 
 bool FetcherAdapterRegisterJni(JNIEnv* j_env);
 
@@ -24,6 +25,10 @@ class FetcherAdapter {
  public:
   FetcherAdapter(scoped_refptr<cnet::Fetcher> fetcher);
   ~FetcherAdapter();
+
+  static jlong CreateFetcherAdapter(PoolAdapter* pool_adapter,
+    JNIEnv* j_env, jobject j_caller, jstring j_url, jstring j_method,
+    jobject j_completion);
 
   void ReleaseFetcherAdapter(JNIEnv* j_env, jobject j_caller);
 
