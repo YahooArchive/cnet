@@ -15,6 +15,7 @@
 #include "yahoo/cnet/cnet_fetcher.h"
 #include "yahoo/cnet/cnet_oauth.h"
 #include "yahoo/cnet/cnet_response.h"
+#include "url/url_util.h"
 
 #if !defined(USE_ICU_ALTERNATIVES_ON_ANDROID)
 #include "base/i18n/icu_util.h"
@@ -39,6 +40,8 @@ void Initialize(bool in_chromium) {
     logging::LoggingSettings settings;
     settings.logging_dest = logging::LOG_TO_SYSTEM_DEBUG_LOG;
     logging::InitLogging(settings);
+
+    url::Initialize();
   }
 }
 
