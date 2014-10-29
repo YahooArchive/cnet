@@ -51,6 +51,7 @@ public class HttpUrlConnectionFetcher implements Fetcher {
                     originalUrl = new URL(mUrl);
                 }  catch (MalformedURLException e) {
                     Log.e(LOG_TAG, "Error in URL format.", e);
+                    originalUrl = null;
                 }
                 finalUrl = originalUrl;
                 if (!isCancelled() && (originalUrl != null)) {
@@ -68,6 +69,7 @@ public class HttpUrlConnectionFetcher implements Fetcher {
                         }
                     } catch (IOException e) {
                         Log.e(LOG_TAG, "Error opening url.", e);
+                        conn = null;
                     }
                     if (!isCancelled() && (conn != null)) {
                         InputStream in = null;
@@ -81,6 +83,7 @@ public class HttpUrlConnectionFetcher implements Fetcher {
                             in = conn.getInputStream();
                         } catch (IOException e) {
                             Log.e(LOG_TAG, "Error getting response.", e);
+                            in = null;
                         }
                         if (!isCancelled() && (in != null)) {
                             int preallocLength = (contentLength > MAX_RESPONSE_PREALLOC_BYTES) ?
