@@ -109,7 +109,7 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
         GetNetworkTaskRunner() const override;
 
    private:
-    net::URLRequestContext* context_;
+    scoped_ptr<net::URLRequestContext> context_;
     scoped_refptr<base::SingleThreadTaskRunner> network_runner_;
 
     virtual ~PoolContextGetter();
@@ -131,8 +131,7 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
   typedef std::map<scoped_refptr<Fetcher>, int> FetcherToTag;
 
   scoped_refptr<PoolContextGetter> pool_context_getter_;
-  scoped_ptr<net::URLRequestContext> context_;
-  cnet::ProxyConfigService* proxy_config_service_; // Owned by context_
+  cnet::ProxyConfigService* proxy_config_service_; // Owned by URLRequestContext
 
   scoped_refptr<base::SingleThreadTaskRunner> ui_runner_;
   base::Thread* network_thread_;

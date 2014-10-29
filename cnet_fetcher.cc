@@ -845,7 +845,7 @@ void Fetcher::ConvertTiming(CnetLoadTiming *cnet_timing,
 
 void Fetcher::FinishRequest() {
   scoped_ptr<net::HttpResponseInfo> response_info;
-  net::HttpResponseHeaders* response_headers = NULL;
+  scoped_refptr<net::HttpResponseHeaders> response_headers;
   scoped_ptr<CnetLoadTiming> cnet_timing(new CnetLoadTiming);
   net::URLRequestStatus status(net::URLRequestStatus::FAILED, net::ERR_FAILED);
   int http_response_code = -1;

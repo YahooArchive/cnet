@@ -76,7 +76,7 @@ Pool::PoolContextGetter::~PoolContextGetter() {
 }
 
 net::URLRequestContext* Pool::PoolContextGetter::GetURLRequestContext() {
-  return context_;
+  return context_.get();
 }
 
 scoped_refptr<base::SingleThreadTaskRunner>
@@ -195,18 +195,17 @@ void Pool::InitializeURLRequestContext(
     context_builder.EnableHttpCache(cache_params);
   }
 
-  context_.reset(context_builder.Build());
-  context_->set_ssl_config_service(
+  net::URLRequestContext* context = context_builder.Build();
+  context->set_ssl_config_service(
       new SSLConfigService(enable_ssl_false_start_));
   if (enable_quic_) {
     // Set the alternate-protocol threshold, so that we can register
     // QUIC as an alternate protocol for specific hosts.
-    context_->http_server_properties()->
+    context->http_server_properties()->
         SetAlternateProtocolProbabilityThreshold(0.0f);
   }
 
-  pool_context_getter_ = new PoolContextGetter(context_.get(),
-      GetNetworkTaskRunner());
+  pool_context_getter_ = new PoolContextGetter(context, GetNetworkTaskRunner());
 }
 
 void Pool::AllocSystemProxyOnUi() {
@@ -273,7 +272,7 @@ void Pool::SetEnableSslFalseStart(bool value) {
   }
 
   enable_ssl_false_start_ = value;
-  context_->set_ssl_config_service(
+  pool_context_getter()->GetURLRequestContext()->set_ssl_config_service(
       new SSLConfigService(enable_ssl_false_start_));
 }
 
@@ -291,8 +290,9 @@ void Pool::AddQuicHint(const std::string& host, uint16 port,
   if (host_info.IsIPAddress() ||
       net::IsCanonicalizedHostCompliant(canon_host)) {
     net::HostPortPair host_port(host, port);
-    context_->http_server_properties()->SetAlternateProtocol(host_port,
-        alternate_port, net::AlternateProtocol::QUIC, 1.0f);
+    pool_context_getter()->GetURLRequestContext()->http_server_properties()->
+        SetAlternateProtocol(host_port, alternate_port,
+            net::AlternateProtocol::QUIC, 1.0f);
   } else {
     LOG(ERROR) << "Invalid QUIC hint host: " << host;
   }
