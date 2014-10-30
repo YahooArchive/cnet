@@ -55,7 +55,7 @@ public interface Fetcher {
 
     /**
      * Start the fetch.
-     * You may no longer adjust the fetch properties once it is started.
+     * You may no longer adjust the fetcher properties once it is started.
      */
     public void start();
 
@@ -77,6 +77,10 @@ public interface Fetcher {
      */
     public void release();
 
+    /**
+     * Set the cache behavior for the fetch.
+     * Use one of the CACHE_ constants.
+     */
     public void setCacheBehavior(int behavior);
 
     /**
@@ -84,18 +88,58 @@ public interface Fetcher {
      * When these credentials are set, the request will be signed
      * according to OAuth v1.
      */
-    public void setOauthCredentials(String appKey, String appSecret, String token, String tokenSecret);
+    public void setOauthCredentials(String appKey, String appSecret,
+            String token, String tokenSecret);
 
+    /**
+     * Set the request's parameter encoding.
+     * Use one of the PARAMS_ENCODE_ constants.
+     */
     public void setUrlParamsEncoding(int encoding);
-    public void setUrlParam(String key, String value);
-    public void addUrlParams(Map<String, String> params);
-    public void setUrlParamFile(String key, String filename, String contentType, String path,
-                                long rangeOffset, long rangeLength);
-    public void setUploadBody(String contentType, String body);
-    public void setUploadBody(String contentType, byte[] body);
-    public void setUploadFilePath(String contentType, String path, long rangeOffset, long rangeLength);
 
+    /**
+     * Set a request parameter.
+     * It replaces an existing value.
+     */
+    public void setUrlParam(String key, String value);
+
+    /**
+     * Add a batch of request parameters.
+     */
+    public void addUrlParams(Map<String, String> params);
+
+    /**
+     * Request a file upload for a multi-part form upload.
+     */
+    public void setUrlParamFile(String key, String filename,
+            String contentType, String path,
+            long rangeOffset, long rangeLength);
+
+    /**
+     * Set the request body to upload.
+     */
+    public void setUploadBody(String contentType, String body);
+
+    /**
+     * Set the request body to upload.
+     */
+    public void setUploadBody(String contentType, byte[] body);
+
+    /**
+     * Request a file upload as the request body.
+     */
+    public void setUploadFilePath(String contentType, String path,
+            long rangeOffset, long rangeLength);
+
+    /**
+     * Set a request header.
+     * This replaces an existing header.
+     */
     public void setHeader(String key, String value);
+
+    /**
+     * Add a batch of headers to the request.
+     */
     public void addHeaders(Map<String, String> headers);
 }
 
