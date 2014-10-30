@@ -40,8 +40,14 @@ jlong FetcherAdapter::CreateFetcherAdapter(PoolAdapter* pool_adapter,
     return 0;
   }
 
-  std::string url = base::android::ConvertJavaStringToUTF8(j_env, j_url);
-  std::string method = base::android::ConvertJavaStringToUTF8(j_env, j_method);
+  std::string url;
+  std::string method;
+  if (j_url != NULL) {
+    url = base::android::ConvertJavaStringToUTF8(j_env, j_url);
+  }
+  if (j_method != NULL) {
+    method = base::android::ConvertJavaStringToUTF8(j_env, j_method);
+  }
 
   // Retain the Java fetcher object to ensure that the fetch
   // completes even if the fetcher object goes out of scope.
@@ -95,8 +101,14 @@ void FetcherAdapter::SetCacheBehavior(JNIEnv* j_env, jobject j_caller,
 
 void FetcherAdapter::SetHeader(JNIEnv* j_env, jobject j_caller, jstring j_key,
     jstring j_value) {
-  std::string key = base::android::ConvertJavaStringToUTF8(j_env, j_key);
-  std::string value = base::android::ConvertJavaStringToUTF8(j_env, j_value);
+  std::string key;
+  std::string value;
+  if (j_key != NULL) {
+    key = base::android::ConvertJavaStringToUTF8(j_env, j_key);
+  }
+  if (j_value != NULL) {
+    value = base::android::ConvertJavaStringToUTF8(j_env, j_value);
+  }
   fetcher_->SetHeader(key, value);
 }
 
@@ -104,12 +116,22 @@ void FetcherAdapter::SetOauthCredentials(JNIEnv* j_env, jobject j_caller,
     jstring j_app_key, jstring j_app_secret, jstring j_token,
     jstring j_token_secret) {
   cnet::OauthCredentials creds;
-  creds.app_key = base::android::ConvertJavaStringToUTF8(j_env, j_app_key);
-  creds.app_secret = base::android::ConvertJavaStringToUTF8(j_env,
-      j_app_secret);
-  creds.token = base::android::ConvertJavaStringToUTF8(j_env, j_token);
-  creds.token_secret = base::android::ConvertJavaStringToUTF8(j_env,
-      j_token_secret);
+
+  if (j_app_key != NULL) {
+    creds.app_key = base::android::ConvertJavaStringToUTF8(j_env, j_app_key);
+  }
+  if (j_app_secret != NULL) {
+    creds.app_secret = base::android::ConvertJavaStringToUTF8(j_env,
+        j_app_secret);
+  }
+  if (j_token != NULL) {
+    creds.token = base::android::ConvertJavaStringToUTF8(j_env, j_token);
+  }
+  if (j_token_secret != NULL) {
+    creds.token_secret = base::android::ConvertJavaStringToUTF8(j_env,
+        j_token_secret);
+  }
+
   fetcher_->SetOauthCredentials(creds);
 }
 
@@ -121,37 +143,71 @@ void FetcherAdapter::SetUrlParamsEncoding(JNIEnv* j_env, jobject j_caller,
 
 void FetcherAdapter::SetUrlParam(JNIEnv* j_env, jobject j_caller, jstring j_key,
     jstring j_value) {
-  std::string key = base::android::ConvertJavaStringToUTF8(j_env, j_key);
-  std::string value = base::android::ConvertJavaStringToUTF8(j_env, j_value);
+  std::string key;
+  std::string value;
+
+  if (j_key != NULL) {
+    key = base::android::ConvertJavaStringToUTF8(j_env, j_key);
+  }
+  if (j_value != NULL) {
+    value = base::android::ConvertJavaStringToUTF8(j_env, j_value);
+  }
+
   fetcher_->SetUrlParam(key, value);
 }
 
 void FetcherAdapter::SetUrlParamFile(JNIEnv* j_env, jobject j_caller,
     jstring j_key, jstring j_filename, jstring j_content_type, jstring j_path,
     jlong j_range_offset, jlong j_range_length) {
-  std::string key = base::android::ConvertJavaStringToUTF8(j_env, j_key);
-  std::string filename = base::android::ConvertJavaStringToUTF8(j_env,
-      j_filename);
-  std::string content_type = base::android::ConvertJavaStringToUTF8(j_env,
-      j_content_type);
-  base::FilePath path(base::android::ConvertJavaStringToUTF8(j_env, j_path));
+  std::string key;
+  std::string filename;
+  std::string content_type;
+  base::FilePath path;
+
+  if (j_key != NULL) {
+    key = base::android::ConvertJavaStringToUTF8(j_env, j_key);
+  }
+  if (j_filename != NULL) {
+    filename = base::android::ConvertJavaStringToUTF8(j_env, j_filename);
+  }
+  if (j_content_type != NULL) {
+    content_type = base::android::ConvertJavaStringToUTF8(j_env,
+        j_content_type);
+  }
+  if (j_path != NULL) {
+    path = base::FilePath(
+        base::android::ConvertJavaStringToUTF8(j_env, j_path));
+  }
+
   fetcher_->SetUrlParamFile(key, filename, content_type, path, 
       j_range_offset, j_range_length);
 }
 
 void FetcherAdapter::SetUploadStringBody(JNIEnv* j_env, jobject j_caller,
     jstring j_content_type, jstring j_body) {
-  std::string content_type = base::android::ConvertJavaStringToUTF8(j_env,
-      j_content_type);
-  std::string body = base::android::ConvertJavaStringToUTF8(j_env, j_body);
+  std::string content_type;
+  std::string body;
+
+  if (j_content_type != NULL) {
+    content_type = base::android::ConvertJavaStringToUTF8(j_env,
+        j_content_type);
+  }
+  if (j_body != NULL) {
+    body = base::android::ConvertJavaStringToUTF8(j_env, j_body);
+  }
+
   fetcher_->SetUploadBody(content_type, body);
 }
 
 void FetcherAdapter::SetUploadByteBody(JNIEnv* j_env, jobject j_caller,
     jstring j_content_type, jbyteArray j_body) {
-  std::string content_type = base::android::ConvertJavaStringToUTF8(j_env,
-      j_content_type);
+  std::string content_type;
   std::string body;
+
+  if (j_content_type != NULL) {
+    content_type = base::android::ConvertJavaStringToUTF8(j_env,
+        j_content_type);
+  }
   if (j_body != NULL) {
     jsize len = j_env->GetArrayLength(j_body);
     jbyte* bytes = j_env->GetByteArrayElements(j_body, NULL);
@@ -159,15 +215,25 @@ void FetcherAdapter::SetUploadByteBody(JNIEnv* j_env, jobject j_caller,
         static_cast<size_t>(len));
     j_env->ReleaseByteArrayElements(j_body, bytes, JNI_ABORT);
   }
+
   fetcher_->SetUploadBody(content_type, body);
 }
 
 void FetcherAdapter::SetUploadFilePath(JNIEnv* j_env, jobject j_caller,
     jstring j_content_type, jstring j_path,
     jlong j_range_offset, jlong j_range_length) {
-  std::string content_type = base::android::ConvertJavaStringToUTF8(j_env,
-      j_content_type);
-  base::FilePath path(base::android::ConvertJavaStringToUTF8(j_env, j_path));
+  std::string content_type;
+  base::FilePath path;
+
+  if (j_content_type != NULL) {
+    content_type = base::android::ConvertJavaStringToUTF8(j_env,
+        j_content_type);
+  }
+  if (j_path != NULL) {
+    path = base::FilePath(
+        base::android::ConvertJavaStringToUTF8(j_env, j_path));
+  }
+
   fetcher_->SetUploadFilePath(content_type, path, j_range_offset,
       j_range_length);
 }

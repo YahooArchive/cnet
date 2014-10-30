@@ -68,7 +68,10 @@ void PoolAdapter::ReleasePoolAdapter(JNIEnv* j_env, jobject j_caller) {
 
 void PoolAdapter::SetProxyRules(JNIEnv* j_env, jobject j_caller,
     jstring j_rules) {
-  std::string rules = base::android::ConvertJavaStringToUTF8(j_env, j_rules);
+  std::string rules;
+  if (j_rules != NULL) {
+    rules = base::android::ConvertJavaStringToUTF8(j_env, j_rules);
+  }
   pool_->SetProxyConfig(rules);
 }
 
