@@ -6,7 +6,7 @@
 namespace cnet {
 
 ProxyConfigService::ProxyConfigService()
-    : is_manual_(false), is_in_init_(true) {
+    : is_manual_(false) {
   status_ = ProxyConfigService::CONFIG_PENDING;
   config_.reset(new net::ProxyConfig);
   *config_ = net::ProxyConfig::CreateDirect();
@@ -22,7 +22,6 @@ void ProxyConfigService::ActivateSystemProxyService(
     net::ProxyConfigService *system_proxy_service) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
-  is_in_init_ = false;
   system_proxy_service_.reset(system_proxy_service);
   
   if (system_proxy_service_ != NULL) {
@@ -88,17 +87,9 @@ void ProxyConfigService::SetProxyConfig(const std::string& rules) {
     is_manual_ = false;
     // Use the system's configuration.
     status_ = system_proxy_service_->GetLatestProxyConfig(config_.get());
-  } else if (is_in_init_) {
-    // We are still waiting for the system's configuration.
-    *config_ = net::ProxyConfig::CreateDirect();
-    if (status_ != ProxyConfigService::CONFIG_PENDING) {
-      // We can't return to the CONFIG_PENDING state, so we assume no proxy.
-      is_manual_ = false;
-      *config_ = net::ProxyConfig::CreateDirect();
-      status_ = ProxyConfigService::CONFIG_VALID;
-    }
   } else {
-    // Disable the proxy.
+    // Disable the proxy.  Note: we might get the system configuration
+    // in the future.
     is_manual_ = false;
     *config_ = net::ProxyConfig::CreateDirect();
     status_ = ProxyConfigService::CONFIG_VALID;

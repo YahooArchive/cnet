@@ -15,6 +15,7 @@
 #include "net/http/http_network_session.h"
 #include "net/http/http_stream_factory.h"
 #include "net/http/http_transaction_factory.h"
+#include "net/proxy/proxy_service.h"
 #include "net/ssl/ssl_config.h"
 #include "net/ssl/ssl_config_service.h"
 #include "net/url_request/http_user_agent_settings.h"
@@ -24,12 +25,6 @@
 #include "yahoo/cnet/cnet_fetcher.h"
 #include "yahoo/cnet/cnet_network_delegate.h"
 #include "yahoo/cnet/cnet_proxy_service.h"
-
-#if defined(OS_IOS)
-#include "net/proxy/proxy_config_service_ios.h"
-#elif defined(OS_ANDROID)
-#include "net/proxy/proxy_config_service_android.h"
-#endif
 
 namespace cnet {
 
@@ -218,13 +213,9 @@ void Pool::AllocSystemProxyOnUi() {
     return;
   }
 
-  net::ProxyConfigService* system_proxy_service = NULL;
-#if defined(OS_IOS)
-  system_proxy_service = new net::ProxyConfigServiceIOS();
-#elif defined(OS_ANDROID)
-  system_proxy_service =
-      new net::ProxyConfigServiceAndroid(GetNetworkTaskRunner(), ui_runner_);
-#endif
+  net::ProxyConfigService* system_proxy_service = 
+      net::ProxyService::CreateSystemProxyConfigService(
+          GetNetworkTaskRunner(), NULL);
   ActivateSystemProxy(system_proxy_service);
 }
 

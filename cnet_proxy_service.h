@@ -34,7 +34,6 @@ class ProxyConfigService : public net::ProxyConfigService,
  private:
   net::ProxyConfigService::ConfigAvailability status_;
   bool is_manual_;
-  bool is_in_init_;
   ObserverList<net::ProxyConfigService::Observer> observers_;
   scoped_ptr<net::ProxyConfig> config_;
   scoped_ptr<net::ProxyConfigService> system_proxy_service_;
