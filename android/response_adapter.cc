@@ -8,6 +8,7 @@
 #include "base/android/jni_array.h"
 #include "net/http/http_response_headers.h"
 #include "yahoo/cnet/android/cnet_jni.h"
+#include "yahoo/cnet/android/cnet_ymagine.h"
 #include "yahoo/cnet/cnet.h"
 #include "yahoo/cnet/cnet_response.h"
 
@@ -24,6 +25,10 @@ bool ResponseAdapterRegisterJni(JNIEnv* j_env) {
 
 void InvokeResponseRelease(JNIEnv* j_env, jobject j_response) {
   Java_CnetResponse_release(j_env, j_response);
+}
+
+static jboolean HasNativeBitmap(JNIEnv* j_env, jobject j_caller) {
+  return cnet::ymagine::android::get_syms() != NULL;
 }
 
 /* static */
@@ -55,6 +60,26 @@ base::android::ScopedJavaLocalRef<jbyteArray> ResponseAdapter::GetBody(
     return base::android::ToJavaByteArray(j_env,
         (const uint8*)body, response_->response_length());
   }
+}
+
+jboolean ResponseAdapter::GetBodyAsBitmap(JNIEnv* j_env, jobject j_caller,
+    jobject j_recycled_bitmap,
+    jint j_max_width, jint j_max_height, jint j_scale_type) {
+  jboolean result = false;
+  const char* body = response_->response_body();
+  int body_len = response_->response_length();
+  const cnet::ymagine::android::YmagineSyms *syms =
+      cnet::ymagine::android::get_syms();
+  if ((syms != NULL) && (body != NULL) && (body_len > 0)) {
+    cnet::ymagine::android::Vbitmap* vbitmap = syms->vbitmapInitAndroid(j_env,
+        j_recycled_bitmap);
+    if (vbitmap != NULL) {
+      result = -1 != syms->decode(vbitmap, body, body_len,
+                                  j_max_width, j_max_height, j_scale_type);
+      syms->vbitmapRelease(vbitmap);
+    }
+  }
+  return result;
 }
 
 jint ResponseAdapter::GetBodyLength(JNIEnv* j_env, jobject j_caller) {

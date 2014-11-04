@@ -30,6 +30,8 @@
       'cnet/android/cnet_jni_registrar.h',
       'cnet/android/cnet_adapter.cc',
       'cnet/android/cnet_adapter.h',
+      'cnet/android/cnet_ymagine.cc',
+      'cnet/android/cnet_ymagine.h',
       'cnet/android/fetcher_adapter.cc',
       'cnet/android/fetcher_adapter.h',
       'cnet/android/pool_adapter.cc',

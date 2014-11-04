@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 package com.yahoo.cnet;
 
+import android.graphics.Bitmap;
+
 import org.chromium.base.CalledByNative;
 import org.chromium.base.JNINamespace;
 
@@ -19,6 +21,24 @@ public class CnetResponse implements Response {
             mBody = nativeGetBody(mNativeResponseAdapter);
         }
         return mBody;
+    }
+
+    @Override
+    public synchronized boolean getBodyAsBitmap(Bitmap recycledBitmap,
+            int maxWidth, int maxHeight, int scaleType) {
+        if (mNativeResponseAdapter != 0) {
+            if (nativeHasNativeBitmap()) {
+                return nativeGetBodyAsBitmap(mNativeResponseAdapter,
+                        recycledBitmap, maxWidth, maxHeight, scaleType);
+            } else if (mBody == null) {
+                mBody = nativeGetBody(mNativeResponseAdapter);
+            }
+        }
+
+        if (mBody != null) {
+            throw new UnsupportedOperationException("unimplemented");
+        }
+        return false;
     }
 
     @Override
@@ -180,6 +200,9 @@ public class CnetResponse implements Response {
     private native byte[] nativeGetBody(long nativeResponseAdapter);
     private native int nativeGetBodyLength(long nativeResponseAdapter);
     private native long nativeGetBodyRawPointer(long nativeResponseAdapter);
+    private native boolean nativeHasNativeBitmap();
+    private native boolean nativeGetBodyAsBitmap(long nativeResponseAdapter,
+            Bitmap recycledBitmap, int maxWidth, int maxHeight, int scaleType);
     private native String nativeGetOriginalUrl(long nativeResponseAdapter);
     private native String nativeGetFinalUrl(long nativeResponseAdapter);
     private native int nativeGetHttpResponseCode(long nativeResponseAdapter);

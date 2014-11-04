@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 package com.yahoo.cnet;
 
+import android.graphics.Bitmap;
+
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,12 @@ public class HttpUrlConnectionResponse implements Response {
     @Override
     public byte[] getBody() {
         return mResponseBody;
+    }
+
+    @Override
+    public boolean getBodyAsBitmap(Bitmap recycledBitmap,
+            int maxWidth, int maxHeight, int scaleType) {
+        throw new UnsupportedOperationException("unimplemented");
     }
 
     @Override

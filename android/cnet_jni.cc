@@ -15,6 +15,7 @@
 #include "yahoo/cnet/cnet.h"
 #include "yahoo/cnet/android/cnet_jni.h"
 #include "yahoo/cnet/android/cnet_jni_registrar.h"
+#include "yahoo/cnet/android/cnet_ymagine.h"
 
 namespace {
 
@@ -47,6 +48,9 @@ jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
       LOG(ERROR) << "Failed to register Cnet native methods.";
       return -1;
     }
+
+    // Dynamic link to Ymagine if it is available.
+    cnet::ymagine::android::SymsInit();
 
     CnetInitialize(0);
   }

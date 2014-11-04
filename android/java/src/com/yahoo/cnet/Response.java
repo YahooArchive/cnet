@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 package com.yahoo.cnet;
 
+import android.graphics.Bitmap;
+
 public interface Response {
     /**
      * Get the response body from the fetch.
@@ -17,6 +19,22 @@ public interface Response {
      * response body from native into Java.
      */
     public int getBodyLength();
+
+    /**
+     * Scale and leave a letterbox (black bars) around the image.
+     */
+    public static final int SCALE_LETTERBOX = 0;
+    /**
+     * Scale and crop parts of the image so that the image fills the specified size.
+     */
+    public static final int SCALE_CROP = 1;
+    /**
+     * Scale and resize the image, modifying its aspect ratio if necessary.
+     */
+    public static final int SCALE_FIT = 2;
+
+    public boolean getBodyAsBitmap(Bitmap recycledBitmap,
+            int maxWidth, int maxHeight, int scaleType);
 
     /**
      * Get the URL used for the intial fetch, prior to redirects.
