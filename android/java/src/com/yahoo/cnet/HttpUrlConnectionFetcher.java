@@ -123,13 +123,19 @@ public class HttpUrlConnectionFetcher implements Fetcher {
                 }
 
                 if (mResponseCompletion != null) {
-                    HttpUrlConnectionResponse response = new HttpUrlConnectionResponse(
+                    final HttpUrlConnectionResponse response = new HttpUrlConnectionResponse(
                             originalUrl, finalUrl, responseHeaders, httpResponseCode, responseBody);
-                    boolean release_now = mResponseCompletion.onBackgroundComplete(
-                            HttpUrlConnectionFetcher.this, response);
-                    if (release_now) {
-                        response.release();
-                    }
+                    // Don't block the network threads with response handling.
+                    mPool.getWorkDispatch().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean release_now = mResponseCompletion.onBackgroundComplete(
+                                    HttpUrlConnectionFetcher.this, response);
+                            if (release_now) {
+                                response.release();
+                            }
+                        }
+                    });
                 }
             }
         });

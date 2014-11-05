@@ -4,6 +4,8 @@
 package com.yahoo.cnet;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +18,7 @@ public class HttpUrlConnectionPool implements Pool {
 
     private final BlockingQueue<Runnable> mRunQueue;
     private final ThreadPoolExecutor mThreadPool;
+    private final ExecutorService mWorkDispatch;
     private final String mUserAgent;
 
     public HttpUrlConnectionPool(final Config config) {
@@ -31,6 +34,7 @@ public class HttpUrlConnectionPool implements Pool {
 
         mRunQueue = new LinkedBlockingQueue<Runnable>();
         mThreadPool = new ThreadPoolExecutor(threadCount, threadCount, 10, TimeUnit.SECONDS, mRunQueue);
+        mWorkDispatch = Executors.newSingleThreadExecutor();
     }
 
     @Override
@@ -64,5 +68,6 @@ public class HttpUrlConnectionPool implements Pool {
 
     public String getUserAgent() { return mUserAgent; }
     public ThreadPoolExecutor getThreadPool() { return mThreadPool; }
+    public ExecutorService getWorkDispatch() { return mWorkDispatch; }
 }
 
