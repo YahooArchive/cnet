@@ -73,7 +73,7 @@ Each pool can create three threads:
 
 1. a networking thread that runs all network logic;
 2. a work thread that runs all callbacks (so that callbacks do not
-   block the networking thread);
+   block the networking thread), one at a time;
 3. and a file thread (created on demand), for reading files for uploads
    and writing files for downloads.
 
