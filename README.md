@@ -313,10 +313,7 @@ GYP_GENERATOR_OUTPUT='out/ia32' ./build/gyp_chromium yahoo/cnet/cnet.gyp
    subdirectory of the output directory.  Only the `libcnet.so` files
    should be architecture dependent.  You can consume the Java
    via a compiled jar, a source jar, or the raw source files
-   themselves (under `java/*`).  The Chromium raw source files get
-   added to the Cnet repo under `android/java/src/org/chromium/*`
-   so that you can compile the Java files on your own from the Cnet
-   repo. You may need the symbols for the dynamic link library: they
-   are in the output directory as `lib/libcnet.so`.
+   themselves (under `java/*`).  You may need the symbols for the dynamic
+   link library: they are in the output directory as `lib/libcnet.so`.
 
 
