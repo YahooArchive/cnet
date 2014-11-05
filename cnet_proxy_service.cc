@@ -77,6 +77,11 @@ void ProxyConfigService::RemoveObserver(
 void ProxyConfigService::SetProxyConfig(const std::string& rules) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
+  if (!is_manual_ && rules.empty()) {
+    // Nothing changes.
+    return;
+  }
+
   config_.reset(new net::ProxyConfig());
   if (!rules.empty()) {
     // Use a manually-specified config.
