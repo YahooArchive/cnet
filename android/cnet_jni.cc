@@ -34,8 +34,6 @@ jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
   if (base::android::IsVMInitialized()) {
     LOG(ERROR) << "Double load of the cnet library.";
   } else {
-    LOG(INFO) << "Loading Cnet.";
-
     JNIEnv* env;
     if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
       return -1;
@@ -45,14 +43,13 @@ jint JNIEXPORT JNICALL JNI_OnLoad(JavaVM* vm, void* reserved) {
 
     if (!base::android::RegisterNativeMethods(
           env, kCnetRegisteredMethods, arraysize(kCnetRegisteredMethods))) {
-      LOG(ERROR) << "Failed to register Cnet native methods.";
       return -1;
     }
 
+    CnetInitialize(0);
+
     // Dynamic link to Ymagine if it is available.
     cnet::ymagine::android::SymsInit();
-
-    CnetInitialize(0);
   }
 
   return JNI_VERSION_1_6;
