@@ -103,6 +103,13 @@ class FetcherTest : public PoolTest {
         download_progress_(0), upload_progress_(0) {
   }
  
+  void Reset() {
+    download_progress_ = 0;
+    upload_progress_ = 0;
+    response_ = NULL;
+    completed_event_.Reset();
+  }
+
   void OnFetcherCompleted(scoped_refptr<cnet::Fetcher> fetcher,
       scoped_refptr<cnet::Response> response) {
     // On work thread.
@@ -186,6 +193,94 @@ TEST_F(FetcherTest, FetchError) {
   ASSERT_NE(response->status().status(), net::URLRequestStatus::SUCCESS);
   ASSERT_EQ(response->status().status(), net::URLRequestStatus::FAILED);
   ASSERT_EQ(response->http_response_code(), -1);
+}
+
+TEST_F(FetcherTest, ManyFetches0) {
+  ASSERT_TRUE(test_server_.Start());
+
+  std::string url(test_server_.GetURL("files/hello.html").spec());
+  for (int i = 0; i < 30; i++) {
+    scoped_refptr<cnet::Fetcher> fetcher(new cnet::Fetcher(
+        pool_, url, "GET",
+        base::Bind(&FetcherTest::OnFetcherCompleted, base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherDownloadProgress,
+            base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherUploadProgress,
+            base::Unretained(this))));
+    fetcher->Start();
+
+    scoped_refptr<cnet::Response> response = WaitForCompletion();
+    ASSERT_EQ(response->status().status(), net::URLRequestStatus::SUCCESS);
+    ASSERT_EQ(response->http_response_code(), 200);
+
+    Reset();
+  }
+}
+
+TEST_F(FetcherTest, ManyFetches1) {
+  ASSERT_TRUE(test_server_.Start());
+
+  std::string url(test_server_.GetURL("files/hello.html").spec());
+  for (int i = 0; i < 30; i++) {
+    scoped_refptr<cnet::Fetcher> fetcher(new cnet::Fetcher(
+        pool_, url, "GET",
+        base::Bind(&FetcherTest::OnFetcherCompleted, base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherDownloadProgress,
+            base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherUploadProgress,
+            base::Unretained(this))));
+    fetcher->Start();
+
+    scoped_refptr<cnet::Response> response = WaitForCompletion();
+    ASSERT_EQ(response->status().status(), net::URLRequestStatus::SUCCESS);
+    ASSERT_EQ(response->http_response_code(), 200);
+
+    Reset();
+  }
+}
+
+TEST_F(FetcherTest, ManyFetches2) {
+  ASSERT_TRUE(test_server_.Start());
+
+  std::string url(test_server_.GetURL("files/hello.html").spec());
+  for (int i = 0; i < 30; i++) {
+    scoped_refptr<cnet::Fetcher> fetcher(new cnet::Fetcher(
+        pool_, url, "GET",
+        base::Bind(&FetcherTest::OnFetcherCompleted, base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherDownloadProgress,
+            base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherUploadProgress,
+            base::Unretained(this))));
+    fetcher->Start();
+
+    scoped_refptr<cnet::Response> response = WaitForCompletion();
+    ASSERT_EQ(response->status().status(), net::URLRequestStatus::SUCCESS);
+    ASSERT_EQ(response->http_response_code(), 200);
+
+    Reset();
+  }
+}
+
+TEST_F(FetcherTest, ManyFetches3) {
+  ASSERT_TRUE(test_server_.Start());
+
+  std::string url(test_server_.GetURL("files/hello.html").spec());
+  for (int i = 0; i < 30; i++) {
+    scoped_refptr<cnet::Fetcher> fetcher(new cnet::Fetcher(
+        pool_, url, "GET",
+        base::Bind(&FetcherTest::OnFetcherCompleted, base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherDownloadProgress,
+            base::Unretained(this)),
+        base::Bind(&FetcherTest::OnFetcherUploadProgress,
+            base::Unretained(this))));
+    fetcher->Start();
+
+    scoped_refptr<cnet::Response> response = WaitForCompletion();
+    ASSERT_EQ(response->status().status(), net::URLRequestStatus::SUCCESS);
+    ASSERT_EQ(response->http_response_code(), 200);
+
+    Reset();
+  }
 }
 
 int main(int argc, char** argv) {
