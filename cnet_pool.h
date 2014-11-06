@@ -12,7 +12,6 @@
 #include "base/memory/scoped_ptr.h"
 #include "base/observer_list.h"
 #include "base/threading/thread.h"
-#include "net/url_request/url_request_context_getter.h"
 
 namespace net {
 class NetworkChangeNotifier;
@@ -91,30 +90,9 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
   scoped_refptr<base::SingleThreadTaskRunner> GetWorkTaskRunner() const;
   scoped_refptr<base::SingleThreadTaskRunner> GetFileTaskRunner();
 
-  scoped_refptr<net::URLRequestContextGetter> pool_context_getter() {
-    return pool_context_getter_;
-  }
+  net::URLRequestContext* GetURLRequestContext() { return context_.get(); }
 
   int log_level() { return log_level_; }
-
-  class PoolContextGetter : public net::URLRequestContextGetter {
-   public:
-    PoolContextGetter(net::URLRequestContext* context,
-        scoped_refptr<base::SingleThreadTaskRunner> network_runner);
-
-    // Overrides from net::URLRequestContextGetter
-    // Note: GetURLRequestContext() is for use on the network thread.
-    virtual net::URLRequestContext* GetURLRequestContext() override;
-    virtual scoped_refptr<base::SingleThreadTaskRunner>
-        GetNetworkTaskRunner() const override;
-
-   private:
-    scoped_ptr<net::URLRequestContext> context_;
-    scoped_refptr<base::SingleThreadTaskRunner> network_runner_;
-
-    virtual ~PoolContextGetter();
-    DISALLOW_COPY_AND_ASSIGN(PoolContextGetter);
-  };
 
  private:
   void InitializeURLRequestContext(
@@ -130,7 +108,7 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
   typedef std::map<int, FetcherList> TagToFetcherList;
   typedef std::map<scoped_refptr<Fetcher>, int> FetcherToTag;
 
-  scoped_refptr<PoolContextGetter> pool_context_getter_;
+  scoped_ptr<net::URLRequestContext> context_;
   cnet::ProxyConfigService* proxy_config_service_; // Owned by URLRequestContext
 
   scoped_refptr<base::SingleThreadTaskRunner> ui_runner_;

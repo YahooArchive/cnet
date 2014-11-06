@@ -211,10 +211,7 @@ bool Fetcher::BuildRequest() {
   }
 
   // Create the request.
-  net::URLRequestContextGetter* url_context_getter =
-      pool_->pool_context_getter().get();
-  CHECK(url_context_getter != NULL);
-  request_ = url_context_getter->GetURLRequestContext()->CreateRequest(gurl_,
+  request_ = pool_->GetURLRequestContext()->CreateRequest(gurl_,
       net::DEFAULT_PRIORITY, this, NULL);
   if (request_ != NULL) {
     // Configure load flags.

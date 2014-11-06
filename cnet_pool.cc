@@ -62,23 +62,6 @@ void SSLConfigService::GetSSLConfig(net::SSLConfig *config) {
 
 
 
-Pool::PoolContextGetter::PoolContextGetter(net::URLRequestContext* context,
-    scoped_refptr<base::SingleThreadTaskRunner> network_runner)
-    : context_(context), network_runner_(network_runner) {
-}
-  
-Pool::PoolContextGetter::~PoolContextGetter() {
-}
-
-net::URLRequestContext* Pool::PoolContextGetter::GetURLRequestContext() {
-  return context_.get();
-}
-
-scoped_refptr<base::SingleThreadTaskRunner>
-Pool::PoolContextGetter::GetNetworkTaskRunner() const {
-  return network_runner_;
-}
-
 Pool::Config::Config()
     : enable_spdy(false), enable_quic(false),
       enable_ssl_false_start(false), trust_all_cert_authorities(false),
@@ -193,17 +176,15 @@ void Pool::InitializeURLRequestContext(
     context_builder.EnableHttpCache(cache_params);
   }
 
-  net::URLRequestContext* context = context_builder.Build();
-  context->set_ssl_config_service(
+  context_.reset(context_builder.Build());
+  context_->set_ssl_config_service(
       new SSLConfigService(enable_ssl_false_start_));
   if (enable_quic_) {
     // Set the alternate-protocol threshold, so that we can register
     // QUIC as an alternate protocol for specific hosts.
-    context->http_server_properties()->
+    context_->http_server_properties()->
         SetAlternateProtocolProbabilityThreshold(0.0f);
   }
-
-  pool_context_getter_ = new PoolContextGetter(context, GetNetworkTaskRunner());
 }
 
 void Pool::AllocSystemProxyOnUi() {
@@ -266,7 +247,7 @@ void Pool::SetEnableSslFalseStart(bool value) {
   }
 
   enable_ssl_false_start_ = value;
-  pool_context_getter()->GetURLRequestContext()->set_ssl_config_service(
+  context_->set_ssl_config_service(
       new SSLConfigService(enable_ssl_false_start_));
 }
 
@@ -284,7 +265,7 @@ void Pool::AddQuicHint(const std::string& host, uint16 port,
   if (host_info.IsIPAddress() ||
       net::IsCanonicalizedHostCompliant(canon_host)) {
     net::HostPortPair host_port(host, port);
-    pool_context_getter()->GetURLRequestContext()->http_server_properties()->
+    context_->http_server_properties()->
         SetAlternateProtocol(host_port, alternate_port,
             net::AlternateProtocol::QUIC, 1.0f);
   } else {
@@ -347,19 +328,12 @@ void Pool::Preconnect(const std::string& url, int num_streams) {
     return;
   }
 
-  DCHECK(pool_context_getter_.get() != NULL);
-  if (pool_context_getter_.get() == NULL) {
-    return;
-  }
-
-  net::URLRequestContext* context =
-      pool_context_getter_->GetURLRequestContext();
-  net::HttpTransactionFactory* factory = context->http_transaction_factory();
+  net::HttpTransactionFactory* factory = context_->http_transaction_factory();
   net::HttpNetworkSession* session = factory->GetSession();
 
   std::string user_agent;
-  if (context->http_user_agent_settings()) {
-    user_agent = context->http_user_agent_settings()->GetUserAgent();
+  if (context_->http_user_agent_settings()) {
+    user_agent = context_->http_user_agent_settings()->GetUserAgent();
   }
   net::HttpRequestInfo request_info;
   request_info.url = GURL(url);
