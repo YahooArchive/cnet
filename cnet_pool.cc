@@ -156,12 +156,15 @@ void Pool::DeleteThreads(base::Thread *network, base::Thread *work,
     base::Thread *file) {
   if (file != NULL) {
     file->Stop();
+    delete file;
   }
   if (work != NULL) {
     work->Stop();
+    delete work;
   }
   if (network != NULL) {
     network->Stop();
+    delete network;
   }
 }
 
