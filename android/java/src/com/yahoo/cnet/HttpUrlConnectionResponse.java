@@ -33,7 +33,7 @@ public class HttpUrlConnectionResponse implements Response {
     }
 
     @Override
-    public boolean getBodyAsBitmap(Bitmap recycledBitmap,
+    public Bitmap getBodyAsBitmap(Bitmap recycledBitmap,
             int maxWidth, int maxHeight, int scaleType) {
         throw new UnsupportedOperationException("unimplemented");
     }

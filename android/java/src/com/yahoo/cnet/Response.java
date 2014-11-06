@@ -33,7 +33,7 @@ public interface Response {
      */
     public static final int SCALE_FIT = 2;
 
-    public boolean getBodyAsBitmap(Bitmap recycledBitmap,
+    public Bitmap getBodyAsBitmap(Bitmap recycledBitmap,
             int maxWidth, int maxHeight, int scaleType);
 
     /**

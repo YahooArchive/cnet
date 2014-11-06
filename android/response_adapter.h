@@ -31,8 +31,8 @@ class ResponseAdapter {
 
   base::android::ScopedJavaLocalRef<jbyteArray> GetBody(JNIEnv* j_env,
       jobject j_caller);
-  jboolean GetBodyAsBitmap(JNIEnv* j_env, jobject j_caller,
-      jobject j_recycled_bitmap,
+  base::android::ScopedJavaLocalRef<jobject> GetBodyAsBitmap(JNIEnv* j_env,
+      jobject j_caller, jobject j_recycled_bitmap,
       jint j_max_width, jint j_max_height, jint j_scale_type);
   jint GetBodyLength(JNIEnv* j_env, jobject j_caller);
 

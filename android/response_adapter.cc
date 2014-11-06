@@ -62,10 +62,10 @@ base::android::ScopedJavaLocalRef<jbyteArray> ResponseAdapter::GetBody(
   }
 }
 
-jboolean ResponseAdapter::GetBodyAsBitmap(JNIEnv* j_env, jobject j_caller,
-    jobject j_recycled_bitmap,
+base::android::ScopedJavaLocalRef<jobject> ResponseAdapter::GetBodyAsBitmap(
+    JNIEnv* j_env, jobject j_caller, jobject j_recycled_bitmap,
     jint j_max_width, jint j_max_height, jint j_scale_type) {
-  jboolean result = false;
+  base::android::ScopedJavaLocalRef<jobject> bitmap;
   const char* body = response_->response_body();
   int body_len = response_->response_length();
   const cnet::ymagine::android::YmagineSyms *syms =
@@ -74,12 +74,14 @@ jboolean ResponseAdapter::GetBodyAsBitmap(JNIEnv* j_env, jobject j_caller,
     cnet::ymagine::android::Vbitmap* vbitmap = syms->vbitmapInitAndroid(j_env,
         j_recycled_bitmap);
     if (vbitmap != NULL) {
-      result = -1 != syms->decode(vbitmap, body, body_len,
-                                  j_max_width, j_max_height, j_scale_type);
+      if (-1 != syms->decode(vbitmap, body, body_len,
+                             j_max_width, j_max_height, j_scale_type)) {
+        bitmap.Reset(j_env, syms->vbitmapGetAndroid(vbitmap));
+      }
       syms->vbitmapRelease(vbitmap);
     }
   }
-  return result;
+  return bitmap;
 }
 
 jint ResponseAdapter::GetBodyLength(JNIEnv* j_env, jobject j_caller) {

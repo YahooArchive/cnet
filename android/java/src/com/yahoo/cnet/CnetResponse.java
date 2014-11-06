@@ -24,7 +24,7 @@ public class CnetResponse implements Response {
     }
 
     @Override
-    public synchronized boolean getBodyAsBitmap(Bitmap recycledBitmap,
+    public synchronized Bitmap getBodyAsBitmap(Bitmap recycledBitmap,
             int maxWidth, int maxHeight, int scaleType) {
         if (mNativeResponseAdapter != 0) {
             if (nativeHasNativeBitmap()) {
@@ -38,7 +38,7 @@ public class CnetResponse implements Response {
         if (mBody != null) {
             throw new UnsupportedOperationException("unimplemented");
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -201,7 +201,7 @@ public class CnetResponse implements Response {
     private native int nativeGetBodyLength(long nativeResponseAdapter);
     private native long nativeGetBodyRawPointer(long nativeResponseAdapter);
     private native boolean nativeHasNativeBitmap();
-    private native boolean nativeGetBodyAsBitmap(long nativeResponseAdapter,
+    private native Bitmap nativeGetBodyAsBitmap(long nativeResponseAdapter,
             Bitmap recycledBitmap, int maxWidth, int maxHeight, int scaleType);
     private native String nativeGetOriginalUrl(long nativeResponseAdapter);
     private native String nativeGetFinalUrl(long nativeResponseAdapter);
