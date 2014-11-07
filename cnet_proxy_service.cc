@@ -22,6 +22,9 @@ void ProxyConfigService::ActivateSystemProxyService(
     net::ProxyConfigService *system_proxy_service) {
   DCHECK(thread_checker_.CalledOnValidThread());
 
+  if (system_proxy_service_ != NULL) {
+    system_proxy_service_->RemoveObserver(this);
+  }
   system_proxy_service_.reset(system_proxy_service);
   
   if (system_proxy_service_ != NULL) {
