@@ -149,6 +149,7 @@ CnetPool CnetPoolCreate(CnetMessageLoopForUi ui_loop,
   cnet::Pool* pool = new cnet::Pool(ui_runner, config);
   if (pool != NULL) {
     pool->AddRef();
+    pool->Start(); // Must have a reference; otherwise will self delete.
   }
   return pool;
 }

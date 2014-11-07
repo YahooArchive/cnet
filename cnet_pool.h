@@ -62,6 +62,7 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
 
   Pool(scoped_refptr<base::SingleThreadTaskRunner> ui_runner,
       const Config& config);
+  void Start();
 
   void SetProxyConfig(const std::string& rules);
 
@@ -95,8 +96,7 @@ class Pool : public base::RefCountedThreadSafe<Pool, PoolTraits> {
   int log_level() { return log_level_; }
 
  private:
-  void InitializeURLRequestContext(
-      scoped_refptr<base::SingleThreadTaskRunner> ui_runner);
+  void InitializeURLRequestContext();
   void OnDestruct() const;
   static void DeleteThreads(base::Thread* network, base::Thread* work,
       base::Thread* file);

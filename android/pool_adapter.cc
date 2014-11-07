@@ -50,6 +50,7 @@ static jlong CreatePoolAdapter(JNIEnv* j_env, jobject j_caller,
   pool_config.trust_all_cert_authorities = j_trust_all_cert_authorities;
   pool_config.log_level = j_log_level;
   scoped_refptr<cnet::Pool> pool(new cnet::Pool(ui_runner, pool_config));
+  pool->Start();
 
   PoolAdapter* pool_adapter = new PoolAdapter(pool);
   return reinterpret_cast<jlong>(pool_adapter);

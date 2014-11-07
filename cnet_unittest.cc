@@ -51,6 +51,7 @@ class PoolTest : public PlatformTest {
     cnet::Pool::Config config;
     config.user_agent = "cnet-unittest";
     pool_ = new cnet::Pool(ui_thread_->task_runner(), config);
+    pool_->Start();
   }
 
   virtual ~PoolTest() { }

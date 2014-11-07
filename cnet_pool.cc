@@ -79,6 +79,7 @@ void PoolTraits::Destruct(const Pool* pool) {
 Pool::Pool(scoped_refptr<base::SingleThreadTaskRunner> ui_runner,
     const Config& config)
     : proxy_config_service_(NULL), ui_runner_(ui_runner),
+      network_thread_(NULL), work_thread_(NULL), file_thread_(NULL),
       outstanding_requests_(0),
       user_agent_(config.user_agent), enable_spdy_(config.enable_spdy),
       enable_quic_(config.enable_quic),
@@ -92,23 +93,6 @@ Pool::Pool(scoped_refptr<base::SingleThreadTaskRunner> ui_runner,
 #else
   trust_all_cert_authorities_ = config.trust_all_cert_authorities;
 #endif
-
-  file_thread_ = NULL;
-  network_thread_ = new base::Thread("cnet");
-  work_thread_ = new base::Thread("cnet-work");
-  base::Thread::Options options;
-  options.message_loop_type = base::MessageLoop::TYPE_IO;
-  network_thread_->StartWithOptions(options);
-  work_thread_->StartWithOptions(options);
-
-  GetNetworkTaskRunner()->PostTask(FROM_HERE,
-      base::Bind(&Pool::InitializeURLRequestContext, this, ui_runner));
-
-  // For Android, the proxy needs a JNI thread (which is our UI thread).  If
-  // we are being allocated from that thread, then we can immediately
-  // establish the proxy, so that we don't have to switch back to the UI
-  // thread later on to allocate it.
-  AllocSystemProxyOnUi();
 }
 
 Pool::~Pool() {
@@ -151,11 +135,30 @@ void Pool::DeleteThreads(base::Thread *network, base::Thread *work,
   }
 }
 
+void Pool::Start() {
+  if (network_thread_ == NULL) {
+    base::Thread::Options options;
+    options.message_loop_type = base::MessageLoop::TYPE_IO;
+    network_thread_ = new base::Thread("cnet");
+    network_thread_->StartWithOptions(options);
+    work_thread_ = new base::Thread("cnet-work");
+    work_thread_->StartWithOptions(options);
+
+    GetNetworkTaskRunner()->PostTask(FROM_HERE,
+        base::Bind(&Pool::InitializeURLRequestContext, this));
+
+    // For Android, the proxy needs a JNI thread (which is our UI thread).  If
+    // we are being allocated from that thread, then we can immediately
+    // establish the proxy, so that we don't have to switch back to the UI
+    // thread later on to allocate it.
+    AllocSystemProxyOnUi();
+  }
+}
+
 // LICENSE: modeled after
 //    URLRequestContextAdapter::InitializeURLRequestContext() from
 //    components/cronet/android/url_request_context_adapter.cc
-void Pool::InitializeURLRequestContext(
-    scoped_refptr<base::SingleThreadTaskRunner> ui_runner) {
+void Pool::InitializeURLRequestContext() {
   proxy_config_service_ = new cnet::ProxyConfigService();
 
   net::URLRequestContextBuilder context_builder;
