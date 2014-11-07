@@ -11,3 +11,5 @@ cnet.iml
 .idea/
 macosx/libs
 macosx/bin
+tests/android/build/
+testserver.log
